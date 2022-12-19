@@ -57,6 +57,11 @@ FORECAST_VALUE = 'yhat'
 FREQ = 'S'
 
 
+# result = query_api.query(org=org, query=query)
+# results = []
+# for table in result:
+#     for record in table.records:
+#         results.append((record.get_field(), record.get_value()))
 
 def query() :
         # ' import "timezone" ' \
@@ -74,8 +79,11 @@ def query() :
                 # Preparing Dataframe: 
                 #df = df.drop(columns=['result', 'table', '_start', '_stop', 'host', '_measurement', 'lat', 'lon', 'sensorID'])
                 result = result.drop(columns=COLUMNS_TO_BE_REMOVED)
+                result['ds'] = pd.to_datetime(result['ds']).apply(lambda t : t.replace(tzinfo=None))
         else :
                 result = None
+
+        #display(result)
         return result
 
 def parseNewLine(newline) :
@@ -116,6 +124,11 @@ def setTags(df) :
 
         return tagsStr
 
+# def setTags(p, df) :
+#         for tag in TAGS :
+#                 p.tag(tag, str(df.at[0, tag]))
+#         return p
+
 
 def setFields(df) :
         #display(df)
@@ -129,8 +142,17 @@ def setFields(df) :
 
         return fieldsStr
 
+# def setFields(p, df) :
+#         for field in FIELDS_TO_FORECAST :
+#                 p.field(field, float(df.at[0, field]))
+#         return p
+
 
 def dfToInflux(df) :
+        # p = Point(df.at[0, MEASUREMENT])
+        # p = setTags(p, df[TAGS])
+        # p = setFields(p, df[FIELDS_TO_FORECAST])
+        # p.measurement(int(df.at[0, TIME].timestamp() * NS))
         return df.at[0, MEASUREMENT] + ',' + setTags(df[TAGS]) + ' ' + setFields(df[FIELDS_TO_FORECAST]) + ' ' + str(int(df.at[0, TIME].timestamp() * NS))
 
 
@@ -143,7 +165,6 @@ def main() :
         number_freq = 10
         freq = str(number_freq) + FREQ
         #display(df)
-        #df['ds'] = pd.to_datetime(df['ds']).apply(lambda t : t.replace(tzinfo=None))
 
         for line in sys.stdin :
                 line = line.rstrip('\n')
@@ -182,7 +203,7 @@ def main() :
                         dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
                         dfToForecast = df.drop(columns=columns)
                         dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
-                        #display(dfToForecast)
+                        display(dfToForecast)
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
