@@ -107,7 +107,7 @@ def parseNewLine(newline) :
         dfL = dfL.drop(columns=NEWLINE_TO_BE_REMOVED)
         # dfL['ds'] = pd.to_datetime(dfL['ds']).apply(lambda t : t.tz_convert(tz=timezone.utc))
         dfL[PD_TIME] = pd.to_datetime(dfL[PD_TIME]).apply(lambda t : t.replace(tzinfo=None))
-        #display(dfL)
+        display(dfL)
 
         return dfL
 
@@ -234,7 +234,7 @@ def main() :
                 #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
                 #forecast['_time'] = pd.to_datetime(forecast['_time'])
                 forecast = pd.DataFrame([forecastDict])
-                #display(forecast)
+                display(forecast)
                 #
                 # display(forecast.iloc[[0]])
                 print(dfToInflux(forecast.iloc[[0]]))
