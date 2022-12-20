@@ -194,7 +194,14 @@ def main() :
                         continue
 
                 for field in FIELDS_TO_FORECAST :
-                        m = Prophet()
+                        m = Prophet(yearly_seasonality=False,
+                                weekly_seasonality=False,
+                                daily_seasonality=30,
+                                n_changepoints=35,
+                                changepoint_range=1,
+                                changepoint_prior_scale=0.01
+                                # interval_width=1.0
+                                )
 
                         columns = SENSOR_COLUMNS.copy()
                         fields = FIELDS_TO_FORECAST.copy()
