@@ -42,6 +42,7 @@ services:
     restart: always
     ports:
       - ${MQTT_PORT}:${MQTT_PORT}
+      - 9001:9001
 
 volumes:
   grafana-storage:
