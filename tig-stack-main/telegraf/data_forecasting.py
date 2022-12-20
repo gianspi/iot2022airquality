@@ -203,7 +203,7 @@ def main() :
                         dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
                         dfToForecast = df.drop(columns=columns)
                         dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
-                        display(dfToForecast)
+                        #display(dfToForecast)
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")

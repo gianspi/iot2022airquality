@@ -2136,3 +2136,41 @@
 1671056604: mosquitto version 2.0.15 running
 1671056643: mosquitto version 2.0.15 terminating
 1671056643: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1671547567: mosquitto version 2.0.15 starting
+1671547567: Config loaded from /mosquitto/config/mosquitto.conf.
+1671547567: Opening ipv4 listen socket on port 1883.
+1671547567: Opening ipv6 listen socket on port 1883.
+1671547567: mosquitto version 2.0.15 running
+1671547869: mosquitto version 2.0.15 terminating
+1671547869: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1671547876: mosquitto version 2.0.15 starting
+1671547876: Config loaded from /mosquitto/config/mosquitto.conf.
+1671547876: Opening ipv4 listen socket on port 1883.
+1671547876: Opening ipv6 listen socket on port 1883.
+1671547876: mosquitto version 2.0.15 running
+1671548024: mosquitto version 2.0.15 terminating
+1671548024: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1671548116: mosquitto version 2.0.15 starting
+1671548116: Config loaded from /mosquitto/config/mosquitto.conf.
+1671548116: Opening ipv4 listen socket on port 1883.
+1671548116: Opening ipv6 listen socket on port 1883.
+1671548116: mosquitto version 2.0.15 running
+1671548118: New connection from 172.18.0.1:35224 on port 1883.
+1671548118: New client connected from 172.18.0.1:35224 as Telegraf-Consumer-vVin7 (p2, c1, k60, u'admin').
+1671548243: New connection from 192.168.0.162:60541 on port 1883.
+1671548243: New client connected from 192.168.0.162:60541 as Arduino-0000134f (p2, c1, k60, u'admin').
+1671548477: Client Telegraf-Consumer-vVin7 disconnected.
+1671548477: mosquitto version 2.0.15 terminating
+1671548477: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1671548493: mosquitto version 2.0.15 starting
+1671548493: Config loaded from /mosquitto/config/mosquitto.conf.
+1671548493: Opening ipv4 listen socket on port 1883.
+1671548493: Opening ipv6 listen socket on port 1883.
+1671548493: mosquitto version 2.0.15 running
+1671548495: New connection from 172.18.0.1:48034 on port 1883.
+1671548495: New client connected from 172.18.0.1:48034 as Telegraf-Consumer-T9Gyb (p2, c1, k60, u'admin').
+1671548990: New connection from 192.168.0.162:53059 on port 1883.
+1671548990: New client connected from 192.168.0.162:53059 as Arduino-000013fb (p2, c1, k60, u'admin').
+1671550293: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1671550479: mosquitto version 2.0.15 terminating
+1671550479: Saving in-memory database to /mosquitto/data//mosquitto.db.
