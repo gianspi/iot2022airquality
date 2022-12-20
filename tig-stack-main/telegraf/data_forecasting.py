@@ -179,7 +179,7 @@ def main() :
                 else :
                         df = parseNewLine(line)
 
-                #display(df)
+                display(df)
 
                 forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                 forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
