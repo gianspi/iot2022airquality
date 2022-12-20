@@ -46,7 +46,6 @@ MIN_ROWS = 2
 COLUMNS_TO_BE_REMOVED = ['result', 'table', '_start', '_stop', 'host', '_measurement', 'aqi', 'rssi']
 NEWLINE_TO_BE_REMOVED = ['host', 'aqi', 'rssi']
 SENSOR_COLUMNS = ['sensorID', 'lat', 'lon']
-MQTT_COLUMNS = ['topic']
 SENSOR_ID = 0
 LAT = 1
 LON = 2
