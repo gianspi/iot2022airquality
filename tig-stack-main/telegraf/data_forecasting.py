@@ -11,6 +11,9 @@ import sys
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+import logging
+logging.getLogger('prophet').setLevel(logging.WARNING)
+
 # DA LEVARE PIù AVANTI
 from IPython.display import display
 
@@ -41,8 +44,9 @@ NS = 1000000000
 #tz = 'Europe/Rome'
 MIN_ROWS = 2
 COLUMNS_TO_BE_REMOVED = ['result', 'table', '_start', '_stop', 'host', '_measurement', 'aqi', 'rssi']
-NEWLINE_TO_BE_REMOVED = ['host', 'aqi', 'rssi', 'topic']
+NEWLINE_TO_BE_REMOVED = ['host', 'aqi', 'rssi']
 SENSOR_COLUMNS = ['sensorID', 'lat', 'lon']
+MQTT_COLUMNS = ['topic']
 SENSOR_ID = 0
 LAT = 1
 LON = 2
@@ -79,7 +83,8 @@ def query() :
                 # Preparing Dataframe: 
                 #df = df.drop(columns=['result', 'table', '_start', '_stop', 'host', '_measurement', 'lat', 'lon', 'sensorID'])
                 result = result.drop(columns=COLUMNS_TO_BE_REMOVED)
-                result['ds'] = pd.to_datetime(result['ds']).apply(lambda t : t.replace(tzinfo=None))
+                #result['ds'] = pd.to_datetime(result['ds']).apply(lambda t : t.replace(tzinfo=None))
+                result['ds'] = result['ds'].dt.tz_localize(None)
         else :
                 result = None
 
@@ -106,8 +111,9 @@ def parseNewLine(newline) :
         dfL = pd.DataFrame([dict((lL[i], lL[i+1]) for i in range(0, len(lL), 2))])
         dfL = dfL.drop(columns=NEWLINE_TO_BE_REMOVED)
         # dfL['ds'] = pd.to_datetime(dfL['ds']).apply(lambda t : t.tz_convert(tz=timezone.utc))
-        dfL[PD_TIME] = pd.to_datetime(dfL[PD_TIME]).apply(lambda t : t.replace(tzinfo=None))
-        display(dfL)
+        #dfL[PD_TIME] = pd.to_datetime(dfL[PD_TIME]).apply(lambda t : t.replace(tzinfo=None))
+        dfL[PD_TIME] = dfL[PD_TIME].dt.tz_localize(None)
+        #display(dfL)
 
         return dfL
 
@@ -179,7 +185,7 @@ def main() :
                 else :
                         df = parseNewLine(line)
 
-                display(df)
+                #display(df)
 
                 forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                 forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
@@ -234,7 +240,7 @@ def main() :
                 #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
                 #forecast['_time'] = pd.to_datetime(forecast['_time'])
                 forecast = pd.DataFrame([forecastDict])
-                display(forecast)
+                #display(forecast)
                 #
                 # display(forecast.iloc[[0]])
                 print(dfToInflux(forecast.iloc[[0]]))
