@@ -225,7 +225,7 @@ def main() :
                         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
                         # future.tail()
                         tmp = m.predict(future)
-
+                        display(tmp)
                         if PD_TIME not in forecast :
                                 forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
 
