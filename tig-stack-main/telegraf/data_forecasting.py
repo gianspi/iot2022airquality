@@ -11,8 +11,8 @@ import sys
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-# import logging
-# logging.getLogger('prophet').setLevel(logging.WARNING)
+import logging
+logging.getLogger('prophet').setLevel(logging.WARNING)
 
 # DA LEVARE PIù AVANTI
 from IPython.display import display
