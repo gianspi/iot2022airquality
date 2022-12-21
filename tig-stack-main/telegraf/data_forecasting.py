@@ -1,4 +1,5 @@
 import os
+import socket
 import tempfile
 temp_dir = tempfile.TemporaryDirectory()
 os.environ['MPLCONFIGDIR'] = temp_dir.name
@@ -50,7 +51,7 @@ SENSOR_ID = 0
 LAT = 1
 LON = 2
 
-HOST = 'localhost'
+HOST = socket.gethostname()
 MEASUREMENT = '_measurement'
 TIME = '_time'
 PD_TIME = 'ds'
@@ -112,7 +113,7 @@ def parseNewLine(newline) :
         # dfL['ds'] = pd.to_datetime(dfL['ds']).apply(lambda t : t.tz_convert(tz=timezone.utc))
         #dfL[PD_TIME] = pd.to_datetime(dfL[PD_TIME]).apply(lambda t : t.replace(tzinfo=None))
         dfL[PD_TIME] = dfL[PD_TIME].dt.tz_localize(None)
-        display(dfL)
+        #display(dfL)
 
         return dfL
 
@@ -225,11 +226,13 @@ def main() :
                         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
                         # future.tail()
                         tmp = m.predict(future)
-                        display(tmp)
+                        
                         if PD_TIME not in forecast :
                                 forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
 
                         tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
+                        display(tmp)
+                        
                         # FORSE USARE .update()
                         forecastDict[field] = tmp.at[0, field] #field[1:-1]
 
@@ -239,6 +242,7 @@ def main() :
                 #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
                 #forecast['_time'] = pd.to_datetime(forecast['_time'])
                 forecast = pd.DataFrame([forecastDict])
+                #forecast = forecast.replace(['localhost'], socket.gethostname())
                 display(forecast)
                 #
                 # display(forecast.iloc[[0]])
