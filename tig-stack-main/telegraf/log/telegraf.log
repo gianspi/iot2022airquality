@@ -1,0 +1,20 @@
+2022-12-30T13:07:43Z I! Starting Telegraf 1.24.3
+2022-12-30T13:07:43Z I! Available plugins: 222 inputs, 9 aggregators, 26 processors, 20 parsers, 57 outputs
+2022-12-30T13:07:43Z I! Loaded inputs: http_listener_v2 mqtt_consumer
+2022-12-30T13:07:43Z I! Loaded aggregators: 
+2022-12-30T13:07:43Z I! Loaded processors: execd
+2022-12-30T13:07:43Z I! Loaded outputs: influxdb_v2
+2022-12-30T13:07:43Z I! Tags enabled: host=2f76215442ca
+2022-12-30T13:07:43Z I! [agent] Config: Interval:10s, Quiet:false, Hostname:"2f76215442ca", Flush Interval:10s
+2022-12-30T13:07:43Z I! [processors.execd] Starting process: /usr/bin/python3 [/etc/telegraf/data_forecasting.py]
+2022-12-30T13:07:43Z I! [inputs.http_listener_v2] Listening on 172.18.0.5:8080
+2022-12-30T13:07:43Z I! [inputs.mqtt_consumer] Connected [tcp://mosquitto:1883]
+2022-12-30T13:11:59Z E! [inputs.mqtt_consumer] Error in plugin: connection lost: EOF
+2022-12-30T13:11:59Z E! [processors.execd] stderr: "Exception ignored in: <function ApiClient.__del__ at 0x7f000da2b1f0>"
+2022-12-30T13:11:59Z E! [processors.execd] stderr: "Traceback (most recent call last):"
+2022-12-30T13:11:59Z E! [processors.execd] stderr: "  File \"/usr/local/lib/python3.9/dist-packages/influxdb_client/_sync/api_client.py\", line 84, in __del__"
+2022-12-30T13:11:59Z E! [processors.execd] stderr: "  File \"/usr/local/lib/python3.9/dist-packages/influxdb_client/_sync/api_client.py\", line 661, in _signout"
+2022-12-30T13:11:59Z E! [processors.execd] stderr: "TypeError: 'NoneType' object is not callable"
+2022-12-30T13:11:59Z I! [processors.execd] Process /usr/bin/python3 shut down
+2022-12-30T13:11:59Z I! [agent] Hang on, flushing any cached metrics before shutdown
+2022-12-30T13:11:59Z I! [agent] Stopping running outputs

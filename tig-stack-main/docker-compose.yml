@@ -18,6 +18,7 @@ services:
       - ${TELEGRAF_CONF_PATH}:/etc/telegraf/telegraf.conf:rw
       - ${TELEGRAF_FORECAST_PATH}:/etc/telegraf/data_forecasting.py:x
       - ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json:r
+      - ${TELEGRAF_LOG_PATH}:/var/log/telegraf/telegraf.log
     env_file:
       - .env
     depends_on:
