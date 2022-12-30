@@ -46,5 +46,5 @@ services:
       - 9001:9001
 
 volumes:
-  grafana-storage:
-  influxdb-storage:
+  grafana-storage: 
+  influxdb-storage: ${INFLUXDB_DATA_PATH}
