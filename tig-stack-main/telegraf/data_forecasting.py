@@ -44,7 +44,7 @@ METRIC = 'mse'
 NS = 1000000000
 #tz = 'Europe/Rome'
 MIN_ROWS = 2
-COLUMNS_TO_BE_REMOVED = ['result', 'table', '_start', '_stop', 'host', '_measurement', 'aqi', 'rssi']
+COLUMNS_TO_BE_REMOVED = ['result', 'table', '_start', '_stop', 'host', '_measurement'] # , 'aqi', 'rssi'
 NEWLINE_TO_BE_REMOVED = ['host', 'aqi', 'rssi']
 SENSOR_COLUMNS = ['sensorID', 'lat', 'lon']
 SENSOR_ID = 0
@@ -61,20 +61,27 @@ FORECAST_VALUE = 'yhat'
 FREQ = 'S'
 
 
-# result = query_api.query(org=org, query=query)
-# results = []
-# for table in result:
-#     for record in table.records:
-#         results.append((record.get_field(), record.get_value()))
 
-def query() :
+# VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
+# def result_to_dataframe(result):
+#     raw = []
+#     for table in result:
+#         for record in table.records:
+#             raw.append((record.get_value(), record.get_time()))
+#     return pd.DataFrame(raw, columns=['y', 'ds'], index=None)
+
+def query(field) :
         # ' import "timezone" ' \
         #         ' option location = timezone.location(name : "Europe/Rome") ' \
         query = ' from(bucket:' + BUCKET + ') ' \
                 ' |> range(start: -1m) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
+                ' |> filter(fn: (r) => r._field == "' + field + '")' \
                 ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
-                #' |> filter(fn: (r) => r._field == ' + field + ') ' \
+
+        # UTILE PER NON FARE I PASSAGGI INTERMEDI
+        # result_query = client.query_api().query(query=query)
+        # result = result_to_dataframe(result_query)
 
         result = client.query_api().query_data_frame(query)
         if len(result.index) > 0 : 
@@ -163,16 +170,18 @@ def dfToInflux(df) :
 
 
 def main() :
-        df = query()
-        columns = FIELDS_TO_FORECAST.copy()
-        columns.extend(TIME)
-        forecast = pd.DataFrame(columns=columns)
+        forecasted = True
+        #df = query()
+        #columns = FIELDS_TO_FORECAST.copy()
+        #columns.extend(TIME)
+        #forecast = pd.DataFrame(columns=columns)
         forecastDict = dict(_measurement=FORECAST_MEASUREMENT, host=HOST)
         number_freq = 10
         freq = str(number_freq) + FREQ
         #display(df)
 
         for line in sys.stdin :
+                forecasted = True
                 line = line.rstrip('\n')
                 print(line)
                 sys.stdout.flush()
@@ -180,26 +189,30 @@ def main() :
                 # VERIFICARE SE ANCHE DOPO PRINT E FLUSH, I DATI NON VENGONO IMMEDIATAMENTE SALVAT SU INFLUX
                 # SE NON VENGONO SALVATI SERVE AGGIUNGERE AL DATAFRAME RITORNATO DALLA QUERY, ANCHE LE RIGHE PRECEDENTI
                 # NON DOVREBBE COMPARIRE; QUINDI è DA AGGIUNGERE MANUALMENTE
-                if df is not None :
-                        df = pd.concat([df, parseNewLine(line)], ignore_index=True)
-                else :
-                        df = parseNewLine(line)
+                # if df is not None :
+                #         df = pd.concat([df, parseNewLine(line)], ignore_index=True)
+                # else :
+                #         df = parseNewLine(line)
 
                 #display(df)
 
-                forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
-                forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
-                forecastDict[SENSOR_COLUMNS[LON]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LON]]
+                
                 #df = df.rename(columns={"_time" : "ds"}) 
                 #df['ds'] = pd.to_datetime(df['ds']).apply(lambda t : t.tz_convert(tz=tz))
                 #df['ds'] = pd.to_datetime(df['ds']).apply(lambda t : t.tz_convert(tz=timezone.utc))
                 #df['ds'] = pd.to_datetime(df['ds']).apply(lambda t : t.replace(tzinfo=None))
                 
 
-                if len(df.index) < MIN_ROWS :
-                        continue
-
                 for field in FIELDS_TO_FORECAST :
+                        df = query(field)
+                        if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
+                                forecasted = False
+                                continue
+
+                        forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
+                        forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
+                        forecastDict[SENSOR_COLUMNS[LON]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LON]]
+
                         m = Prophet(yearly_seasonality=False,
                                 weekly_seasonality=False,
                                 daily_seasonality=30,
@@ -210,44 +223,48 @@ def main() :
                                 )
 
                         columns = SENSOR_COLUMNS.copy()
-                        fields = FIELDS_TO_FORECAST.copy()
-                        fields.remove(field)
-                        columns.extend(fields)
-                        dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
-                        dfToForecast = df.drop(columns=columns)
-                        dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
-                        #display(dfToForecast)
+                        df = df.drop(columns=columns)
+                        df = df.rename(columns={field : PD_VALUE})
+                        # fields = FIELDS_TO_FORECAST.copy()
+                        # fields.remove(field)
+                        # columns.extend(fields)
+                        # dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
+                        # dfToForecast = df.drop(columns=columns)
+                        # dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
+                        # #display(dfToForecast)
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
-                        m.fit(dfToForecast)
+                        m.fit(df) # m.fit(dfToForecast)
                         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
                         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
                         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
                         # future.tail()
                         tmp = m.predict(future)
                         
-                        if PD_TIME not in forecast :
+                        if PD_TIME not in forecastDict :
                                 forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
 
-                        tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
-                        display(tmp)
+                        #tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
+                        #display(tmp)
                         
                         # FORSE USARE .update()
-                        forecastDict[field] = tmp.at[0, field] #field[1:-1]
+                        forecastDict[field] = tmp.at[0, FORECAST_VALUE] #field[1:-1]
 
                         
                 #forecast['_measurement'] = FORECAST_MEASUREMENT
                 #forecast['sensorID'] = "a57"
                 #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
                 #forecast['_time'] = pd.to_datetime(forecast['_time'])
-                forecast = pd.DataFrame([forecastDict])
-                #forecast = forecast.replace(['localhost'], socket.gethostname())
-                display(forecast)
-                #
-                # display(forecast.iloc[[0]])
-                print(dfToInflux(forecast.iloc[[0]]))
-                sys.stdout.flush()
+                if forecasted :
+
+                        forecast = pd.DataFrame([forecastDict])
+                        #forecast = forecast.replace(['localhost'], socket.gethostname())
+                        display(forecast)
+                        #
+                        # display(forecast.iloc[[0]])
+                        print(dfToInflux(forecast.iloc[[0]]))
+                        sys.stdout.flush()
 
                 # for i in range(len(forecast.index)) :
                 #         #display(forecast.iloc[[i]])
