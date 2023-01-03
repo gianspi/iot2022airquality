@@ -74,7 +74,7 @@ def query(field) :
         # ' import "timezone" ' \
         #         ' option location = timezone.location(name : "Europe/Rome") ' \
         query = ' from(bucket:' + BUCKET + ') ' \
-                ' |> range(start: -1m) ' \
+                ' |> range(start: -15m) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
                 ' |> filter(fn: (r) => r._field == "' + field + '")' \
                 ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
@@ -208,6 +208,7 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
+                        display(df)
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]

@@ -24,6 +24,8 @@ services:
     depends_on:
       - influxdb
     restart: unless-stopped
+    # ports:
+    #   - 8080:8080
 
   grafana:
     image: grafana/grafana-oss:latest
