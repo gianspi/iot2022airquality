@@ -18,14 +18,14 @@ services:
       - ${TELEGRAF_CONF_PATH}:/etc/telegraf/telegraf.conf:rw
       - ${TELEGRAF_FORECAST_PATH}:/etc/telegraf/data_forecasting.py:x
       - ${TELEGRAF_LOG_PATH}:/var/log/telegraf/telegraf.log
-      #- ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json:r
+      - ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json:r
     env_file:
       - .env
     depends_on:
       - influxdb
     restart: unless-stopped
-    # ports:
-    #   - 8080:8080
+    ports:
+      - 8080:8080
 
   grafana:
     image: grafana/grafana-oss:latest
