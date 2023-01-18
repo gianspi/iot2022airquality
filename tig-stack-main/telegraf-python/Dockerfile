@@ -11,6 +11,8 @@ RUN pip install influxdb-client && \
     pip install prophet && \
     pip install ipython
 
+EXPOSE 8080
+
 # RUN apt-get update && \
 #     apt-get install -yq tzdata && \
 #     ln -fs /usr/share/zoneinfo/Europe/Rome /etc/localtime && \

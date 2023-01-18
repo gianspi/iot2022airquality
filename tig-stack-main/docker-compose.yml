@@ -47,6 +47,15 @@ services:
       - ${MQTT_PORT}:${MQTT_PORT}
       - 9001:9001
 
+  telegram:
+        build: ./telegram
+        ports:
+            - "8087:8087"
+        restart: always
+        networks: 
+            - internal
+
+
 volumes:
   grafana-storage: 
   influxdb-storage: 
