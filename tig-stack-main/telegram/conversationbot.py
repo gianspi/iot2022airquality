@@ -150,17 +150,19 @@ async def sampleFreq(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 
-async def skip_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def skip_sampleFreq(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     """Skips the photo and asks for a location."""
 
     user = update.message.from_user
 
-    logger.info("User %s did not send a photo.", user.first_name)
+    logger.info("Skip sample Frequency.")
 
     await update.message.reply_text(
 
-        "I bet you look great! Now, send me your location please, or send /skip."
+        "Setting default Sample Frequency." + "\n" + 
+
+        "Insert MIN GAS VALUE or /skip",
 
     )
 
@@ -193,17 +195,19 @@ async def minGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 
 
-async def skip_location(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def skip_minValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     """Skips the location and asks for info about the user."""
 
     user = update.message.from_user
 
-    logger.info("User %s did not send a location.", user.first_name)
+    logger.info("Skip min value")
 
     await update.message.reply_text(
 
-        "You seem a bit paranoid! At last, tell me something about yourself."
+        "Setting default minValue." + "\n" + 
+
+        "Insert MAX GAS VALUE or /skip",
 
     )
 
@@ -228,6 +232,33 @@ async def maxGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         "Selected: " + update.message.text + "\n" + 
         "Sending data to Arduino... ",)
 
+    client.username_pw_set("admin", "admin")
+    client.connect("mosquitto")
+    client.loop_start()
+
+    #messaggio = input("Inserisci il testo da inviare al topic test")
+    data = '{"max":'+ str(maxValue) +', "min":'+ str(minValue) +', "samp":'+ f +', "p":'+ str(mode)+'}'
+    client.publish(topic = "set", payload = data)
+
+    client.loop_stop()
+    client.disconnect()
+
+    await update.message.reply_text(data + " sent to arduino!")
+
+    return ConversationHandler.END
+
+async def skip_maxValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    """Skips the location and asks for info about the user."""
+
+    user = update.message.from_user
+
+    logger.info("Skip max value.")
+
+    await update.message.reply_text(
+        "Setting default maxValue." + "\n" + 
+        "Sending data to Arduino... ",)
+    
     client.username_pw_set("admin", "admin")
     client.connect("mosquitto")
     client.loop_start()
@@ -283,11 +314,11 @@ def main() -> None:
 
             METHOD: [MessageHandler(filters.Regex("^(MQTT|HTTP)$"), method)],
 
-            SAMPLEFREQ: [MessageHandler(filters.TEXT & ~filters.COMMAND, sampleFreq), CommandHandler("skip", skip_photo)],
+            SAMPLEFREQ: [MessageHandler(filters.TEXT & ~filters.COMMAND, sampleFreq), CommandHandler("skip", skip_sampleFreq)],
 
-            MINGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, minGasValue), CommandHandler("skip", skip_location),],
+            MINGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, minGasValue), CommandHandler("skip", skip_minValue),],
 
-            MAXGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, maxGasValue)],
+            MAXGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, maxGasValue), CommandHandler("skip", skip_maxValue)],
 
         },
 
