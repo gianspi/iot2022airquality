@@ -111,9 +111,9 @@ async def method(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     global mode
 
     if(update.message.text == "MQTT"):
-        mode = 0
-    else:
         mode = 1
+    else:
+        mode = 0
 
     await update.message.reply_text(
 
@@ -136,7 +136,8 @@ async def sampleFreq(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     global f
 
-    f = update.message.text
+    if(update.message.text.isnumeric()):
+        f = update.message.text
 
     await update.message.reply_text(
 
@@ -181,7 +182,10 @@ async def minGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
     global minValue
 
-    minValue = update.message.text
+    message = str(update.message.text)
+
+    if(message.replace('.','',1).isnumeric()):
+        minValue = update.message.text
 
     await update.message.reply_text(
 
@@ -226,7 +230,10 @@ async def maxGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
     global maxValue
 
-    maxValue = update.message.text
+    message = str(update.message.text)
+
+    if(message.replace('.','',1).isnumeric()):
+        maxValue = update.message.text
 
     await update.message.reply_text(
         "Selected: " + update.message.text + "\n" + 
