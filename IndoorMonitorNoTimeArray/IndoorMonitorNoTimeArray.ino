@@ -78,6 +78,18 @@ void setup() {
 }
 
 void loop() {
+
+  if (!mqttClient.connected()) {
+    Serial.println("MQTT connection lost");
+    if (!mqttClient.connect(broker, port)) {
+      Serial.print("MQTT reconnection error ");
+      Serial.println(mqttClient.connectError());
+    }else{
+      Serial.println("MQTT reconnected! ");
+      mqttClient.onMessage(onMqttMessage);
+      mqttClient.subscribe(settings_topic);
+    }
+  }
   
   mqttClient.poll();
   delay(SAMPLE_FREQUENCY);
