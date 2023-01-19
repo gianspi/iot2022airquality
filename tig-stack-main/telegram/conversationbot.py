@@ -229,7 +229,7 @@ async def maxGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         "Sending data to Arduino... ",)
 
     client.username_pw_set("admin", "admin")
-    client.connect("192.168.0.166")
+    client.connect("mosquitto")
     client.loop_start()
 
     #messaggio = input("Inserisci il testo da inviare al topic test")
