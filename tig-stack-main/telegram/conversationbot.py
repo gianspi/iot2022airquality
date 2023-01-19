@@ -66,10 +66,10 @@ logger = logging.getLogger(__name__)
 
 METHOD, SAMPLEFREQ, MINGASVALUE, MAXGASVALUE = range(4)
 
-mode = 0
-freq = 5000
-minValue = 0
-maxValue = 1
+mode = "0"
+f = "5000"
+minValue = "0"
+maxValue = "1"
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -108,6 +108,8 @@ async def method(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     logger.info("METHOD of %s: %s", user.first_name, update.message.text)
 
+    global mode
+
     if(update.message.text == "MQTT"):
         mode = 0
     else:
@@ -132,7 +134,9 @@ async def sampleFreq(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     logger.info("Sample Frequency of %s: %s", user.first_name, update.message.text)
 
-    freq = update.message.text
+    global f
+
+    f = update.message.text
 
     await update.message.reply_text(
 
@@ -172,6 +176,8 @@ async def minGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     user = update.message.from_user
 
     logger.info("minGasValue of %s: %s", user.first_name, update.message.text)
+
+    global minValue
 
     minValue = update.message.text
 
@@ -214,6 +220,8 @@ async def maxGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
     logger.info("maxGasValue of %s: %s", user.first_name, update.message.text)
 
+    global maxValue
+
     maxValue = update.message.text
 
     await update.message.reply_text(
@@ -225,7 +233,7 @@ async def maxGasValue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     client.loop_start()
 
     #messaggio = input("Inserisci il testo da inviare al topic test")
-    data = '{"max":'+ str(maxValue) +', "min":'+ str(minValue) +', "samp"'+ str(freq)+':, "p":'+ str(mode)+'}'
+    data = '{"max":'+ str(maxValue) +', "min":'+ str(minValue) +', "samp":'+ f +', "p":'+ str(mode)+'}'
     client.publish(topic = "set", payload = data)
 
     client.loop_stop()
@@ -277,13 +285,7 @@ def main() -> None:
 
             SAMPLEFREQ: [MessageHandler(filters.TEXT & ~filters.COMMAND, sampleFreq), CommandHandler("skip", skip_photo)],
 
-            MINGASVALUE: [
-
-                MessageHandler(filters.TEXT & ~filters.COMMAND, minGasValue),
-
-                CommandHandler("skip", skip_location),
-
-            ],
+            MINGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, minGasValue), CommandHandler("skip", skip_location),],
 
             MAXGASVALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, maxGasValue)],
 
