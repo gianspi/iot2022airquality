@@ -1,4 +1,5 @@
 import logging
+import mean
 
 
 from telegram import __version__ as TG_VER
@@ -77,6 +78,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Starts the conversation and asks the user about their METHOD."""
 
     reply_keyboard = [["MQTT", "HTTP"]]
+
+    mean.queryMean()
 
 
     await update.message.reply_text(

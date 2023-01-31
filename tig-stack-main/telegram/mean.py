@@ -1,8 +1,23 @@
+import logging
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 from influxdb_client.client.write_api import SYNCHRONOUS
+import warnings
+from influxdb_client.client.warnings import MissingPivotFunction
+
+warnings.simplefilter("ignore", MissingPivotFunction)
 
 # DA LEVARE PIù AVANTI
 from IPython.display import display
+
+# Enable logging
+
+logging.basicConfig(
+
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+
+)
+
+logger = logging.getLogger(__name__)
 
 FIELDS = ['hum', 'temp', 'conc']
 AIR_QUALITY = '"air_quality"'
@@ -14,14 +29,16 @@ org = "IoT_Team"
 client = InfluxDBClient(url="http://influxdb:8086", token=token, debug=False, org=org)
 query_api = client.query_api()
 
+def queryMean():
 
-query = ' from(bucket:' + BUCKET + ') ' \
+        logger.info("Log prova")
+
+        query = ' from(bucket:' + BUCKET + ') ' \
         ' |> range(start: -15m) ' \
         ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
         ' |> filter(fn: (r) => r["_field"] == "temp" or r["_field"] == "hum" or r["_field"] == "conc")' \
-        ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") ' \
         ' |> mean() '
 
-result = client.query_api().query_data_frame(query)
-
-display(result)
+        result = client.query_api().query_data_frame(query)
+        result = result.drop(columns = {"result","table","lat","lon","sensorID","_start","host"})
+        logger.info(result)
