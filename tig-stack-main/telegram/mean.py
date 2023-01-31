@@ -11,8 +11,7 @@ FORECAST_MEASUREMENT = 'forecast'
 token = "LUaijeA_-hxGtLkz9axuiCVt51pgGPakizsI7wESL5QAe0vEbr7z1CUoK42Jj0s8lrKT6UWzDmi32hc9E8g-Tw--"
 BUCKET = '"Air_Quality"'
 org = "IoT_Team"
-client = InfluxDBClient(url="http://influxdb:8086",
-                        token=token, debug=False, org=org)
+client = InfluxDBClient(url="http://influxdb:8086", token=token, debug=False, org=org)
 query_api = client.query_api()
 
 
