@@ -6,8 +6,8 @@ WORKDIR /usr/src/app
 
 COPY . .
 # Install app dependencies
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 EXPOSE 8087
 
-CMD python ./conversationbot.py
+CMD python3 ./conversationbot.py

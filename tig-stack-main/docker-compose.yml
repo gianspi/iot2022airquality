@@ -52,8 +52,6 @@ services:
         ports:
             - "8087:8087"
         restart: always
-        networks: 
-            - internal
 
 
 volumes:
