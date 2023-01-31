@@ -1,6 +1,9 @@
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+# DA LEVARE PIù AVANTI
+from IPython.display import display
+
 FIELDS = ['hum', 'temp', 'conc']
 AIR_QUALITY = '"air_quality"'
 FORECAST_MEASUREMENT = 'forecast'

@@ -1,2 +1,5 @@
 paho-mqtt==1.6.1
 python-telegram-bot==20.0
+influxdb-client==1.36.0
+pandas==1.5.3
+ipython==8.9.0
