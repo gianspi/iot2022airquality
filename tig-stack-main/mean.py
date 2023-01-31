@@ -16,7 +16,7 @@ for field in FIELDS :
     query = ' from(bucket:' + BUCKET + ') ' \
                 ' |> range(start: -15m) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
-                ' |> filter(fn: (r) => r._field == "' + field + '")' \
+                ' |> filter(fn: (r) => r["_field"] == "temp" or r["_field"] == "hum" or r["_field"] == "conc")' \
                 ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") ' \
                 ' |> mean() '
 
