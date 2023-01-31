@@ -19,15 +19,16 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-FIELDS = ['hum', 'temp', 'conc']
+FIELDS = ['"temp"', '"hum"', '"conc"']
 AIR_QUALITY = '"air_quality"'
-FORECAST_MEASUREMENT = 'forecast'
 
 token = "LUaijeA_-hxGtLkz9axuiCVt51pgGPakizsI7wESL5QAe0vEbr7z1CUoK42Jj0s8lrKT6UWzDmi32hc9E8g-Tw--"
 BUCKET = '"Air_Quality"'
 org = "IoT_Team"
 client = InfluxDBClient(url="http://influxdb:8086", token=token, debug=False, org=org)
 query_api = client.query_api()
+
+MESSAGE_FORMAT = {FIELDS[0][1, len(FIELDS[0] - 1)]: "Humidity: ", FIELDS[1][1, len(FIELDS[0] - 1)]: "Temperature: ", FIELDS[2][1, len(FIELDS[0] - 1)]: "Gas concentration: "}
 
 def queryMean():
 
@@ -36,9 +37,16 @@ def queryMean():
         query = ' from(bucket:' + BUCKET + ') ' \
         ' |> range(start: -15m) ' \
         ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
-        ' |> filter(fn: (r) => r["_field"] == "temp" or r["_field"] == "hum" or r["_field"] == "conc")' \
+        ' |> filter(fn: (r) => r["_field"] == ' + FIELDS[0] + ' or r["_field"] == ' + FIELDS[1] + ' or r["_field"] == ' + FIELDS[2] + ')' \
         ' |> mean() '
 
         result = client.query_api().query_data_frame(query)
-        result = result.drop(columns = {"result","table","lat","lon","sensorID","_start","host"})
-        logger.info(result)
+        #result = result.drop(columns = {"result","table","lat","lon","sensorID","_start","host"})
+
+        message = ""
+        for i in range(1, len(FIELDS)) :
+                message += "\n" if i > 0 else ""
+                message += MESSAGE_FORMAT[result.at[i, "_field"]] + result.at[i, "_value"]
+
+        logger.info(message)
+        return message
