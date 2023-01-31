@@ -48,10 +48,12 @@ services:
       - 9001:9001
 
   telegram:
-        build: ./telegram
-        ports:
-            - "8087:8087"
-        restart: always
+    build: ./telegram
+    depends_on:
+      - influxdb
+    ports:
+      - "8087:8087"
+    restart: always
 
 
 volumes:
