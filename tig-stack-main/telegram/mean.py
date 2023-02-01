@@ -46,7 +46,7 @@ def queryMean():
         message = ""
         for i in range(1, len(FIELDS)) :
                 message += "\n" if i > 0 else ""
-                message += MESSAGE_FORMAT[result.at[i, "_field"]] + result.at[i, "_value"]
+                message += MESSAGE_FORMAT[result.at[i, "_field"]] + str(result.at[i, "_value"])
 
         logger.info(message)
         return message
