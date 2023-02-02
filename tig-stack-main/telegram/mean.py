@@ -19,11 +19,11 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+BUCKET = '"Air_Quality"'
 FIELDS = ['"temp"', '"hum"', '"conc"']
 AIR_QUALITY = '"air_quality"'
 
 token = "LUaijeA_-hxGtLkz9axuiCVt51pgGPakizsI7wESL5QAe0vEbr7z1CUoK42Jj0s8lrKT6UWzDmi32hc9E8g-Tw--"
-BUCKET = '"Air_Quality"'
 org = "IoT_Team"
 client = InfluxDBClient(url="http://influxdb:8086", token=token, debug=False, org=org)
 query_api = client.query_api()
@@ -37,7 +37,7 @@ def queryMean():
         query = ' from(bucket:' + BUCKET + ') ' \
         ' |> range(start: -15m) ' \
         ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
-        ' |> filter(fn: (r) => r["_field"] == ' + FIELDS[0] + ' or r["_field"] == ' + FIELDS[1] + ' or r["_field"] == ' + FIELDS[2] + ')' \
+        ' |> filter(fn: (r) => r._field == ' + FIELDS[0] + ' or r._field == ' + FIELDS[1] + ' or r._field == ' + FIELDS[2] + ')' \
         ' |> mean() '
 
         result = client.query_api().query_data_frame(query)
