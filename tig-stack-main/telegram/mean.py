@@ -28,7 +28,7 @@ org = "IoT_Team"
 client = InfluxDBClient(url="http://influxdb:8086", token=token, debug=False, org=org)
 query_api = client.query_api()
 
-MESSAGE_FORMAT = {FIELDS[0][1, len(FIELDS[0] - 1)]: "Humidity: ", FIELDS[1][1, len(FIELDS[0] - 1)]: "Temperature: ", FIELDS[2][1, len(FIELDS[0] - 1)]: "Gas concentration: "}
+MESSAGE_FORMAT = {FIELDS[0][1, len(FIELDS[0]) - 1]: "Humidity: ", FIELDS[1][1, len(FIELDS[0]) - 1]: "Temperature: ", FIELDS[2][1, len(FIELDS[0]) - 1]: "Gas concentration: "}
 
 def queryMean():
 
