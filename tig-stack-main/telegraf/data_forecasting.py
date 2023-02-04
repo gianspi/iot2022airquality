@@ -16,6 +16,14 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import logging
 logging.getLogger('prophet').setLevel(logging.WARNING)
 
+logging.basicConfig(
+
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+
+)
+
+logger = logging.getLogger(__name__)
+
 # DA LEVARE PIù AVANTI
 from IPython.display import display
 
@@ -61,9 +69,10 @@ FORECAST_VALUE = 'yhat'
 
 FREQ = 'S'
 
-API_KEY_OPENWEATHER = 'c1e149dbf4a6201212455140073ae1d3'
-OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}'
-OUT_TEMP_FIELD = "Out"
+API_KEY_OPENWEATHER = ''
+OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}&units={unit}'
+OUT_TEMP_FIELD = 'out'
+UNIT = 'metric'
 
 
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
@@ -115,7 +124,10 @@ def getLineLatLon(line) :
 
 def addOutTemp(line,  out_temp) :
         last_wp = line.rfind(" ")
+        display(last_wp)
+        display(line[0:last_wp])
         new_line = line[0:last_wp] + "," + OUT_TEMP_FIELD + "=" + str(out_temp) + line[last_wp:]
+        display(new_line)
         return new_line
 
 
@@ -207,21 +219,21 @@ def main() :
                 forecasted = True
                 line = line.rstrip('\n')
 
-                url = OPENWEATHER_REQUEST
+                
                 line_lat, line_lon = getLineLatLon(line)
-                url.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER)
-
+                url = OPENWEATHER_REQUEST.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER, unit = UNIT)
+                display(url)
                 try:
                     r = requests.get(url)
                     results = r.json()
                     display(results)
-                    if results['cod'] == 200:
+                    if results['cod'] == 200 :
                         line = addOutTemp(line,  results['main']['temp'])
+                        logging.info(line)
                         display(line)
                 except Exception:
                     logging.error("Error getting weather")
 
-                #display(line)
                 print(line)
                 sys.stdout.flush()
 
