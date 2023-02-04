@@ -6,6 +6,7 @@ os.environ['MPLCONFIGDIR'] = temp_dir.name
 import pandas as pd
 from datetime import datetime, timezone
 from prophet import Prophet, diagnostics
+import requests
 
 import sys
 
@@ -60,6 +61,9 @@ FORECAST_VALUE = 'yhat'
 
 FREQ = 'S'
 
+API_KEY_OPENWEATHER = 'c1e149dbf4a6201212455140073ae1d3'
+OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}'
+OUT_TEMP_FIELD = "Out"
 
 
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
@@ -76,7 +80,7 @@ def query(field) :
         query = ' from(bucket:' + BUCKET + ') ' \
                 ' |> range(start: -15m) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
-                ' |> filter(fn: (r) => r._field == "' + field + '")' \
+                ' |> filter(fn: (r) => r._field == "' + field + '") ' \
                 ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
 
         # UTILE PER NON FARE I PASSAGGI INTERMEDI
@@ -97,6 +101,23 @@ def query(field) :
 
         #display(result)
         return result
+
+
+def getLineLatLon(line) :
+        start_lat = line.find("lat=") + len("lat=")
+        start_lon = line.find("lon=") + len("lon=")
+        end_lat = line.find(",", start_lat)
+        end_lon = line.find(",", start_lon)
+        lat = float(line[start_lat:end_lat])
+        lon = float(line[start_lon:end_lon])
+        return lat, lon
+
+
+def addOutTemp(line,  out_temp) :
+        last_wp = line.rfind(" ")
+        new_line = line[0:last_wp] + "," + OUT_TEMP_FIELD + "=" + str(out_temp) + line[last_wp:]
+        return new_line
+
 
 def parseNewLine(newline) :
         dictNewLine = {}
@@ -180,9 +201,27 @@ def main() :
         freq = str(number_freq) + FREQ
         #display(df)
 
+        
+
         for line in sys.stdin :
                 forecasted = True
                 line = line.rstrip('\n')
+
+                url = OPENWEATHER_REQUEST
+                line_lat, line_lon = getLineLatLon(line)
+                url.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER)
+
+                try:
+                    r = requests.get(url)
+                    results = r.json()
+                    display(results)
+                    if results['cod'] == 200:
+                        line = addOutTemp(line,  results['main']['temp'])
+                        display(line)
+                except Exception:
+                    logging.error("Error getting weather")
+
+                #display(line)
                 print(line)
                 sys.stdout.flush()
 
