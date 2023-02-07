@@ -3,3 +3,4 @@ python-telegram-bot==20.0
 influxdb-client==1.36.0
 pandas==1.5.3
 ipython==8.9.0
+python-telegram-bot[job-queue]==20.0 --pre

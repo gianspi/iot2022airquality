@@ -1,7 +1,6 @@
 import logging
 import mean
 
-
 from telegram import __version__ as TG_VER
 
 from paho.mqtt.client import Client
@@ -34,6 +33,7 @@ if __version_info__ < (20, 0, 0, "alpha", 5):
         f"visit https://docs.python-telegram-bot.org/en/v{TG_VER}/examples.html"
 
     )
+    
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 
@@ -78,9 +78,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Starts the conversation and asks the user about their METHOD."""
 
     reply_keyboard = [["MQTT", "HTTP"]]
-
-    mean.queryMean()
-
 
     await update.message.reply_text(
 
@@ -303,7 +300,41 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a message when the command /help is issued."""
+    await update.message.reply_text("Press /start to set up the IoT device, /get to obtain periodic updates on stats.")
 
+async def callback_auto_message(context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    media = mean.queryMean()
+
+    job = context.job
+    await context.bot.send_message(job.chat_id, text=media)
+
+async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    await update.message.reply_text("Press /stop to stop periodic updates.")
+    chat_id = update.effective_message.chat_id
+    context.job_queue.run_repeating(callback_auto_message, 10, chat_id=chat_id, name=str(chat_id))
+    # context.job_queue.run_once(callback_auto_message, 3600, context=chat_id)
+    # context.job_queue.run_daily(callback_auto_message, time=datetime.time(hour=9, minute=22), days=(0, 1, 2, 3, 4, 5, 6), context=chat_id)
+
+def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    """Remove job with given name. Returns whether job was removed."""
+    current_jobs = context.job_queue.get_jobs_by_name(name)
+    if not current_jobs:
+        return False
+    for job in current_jobs:
+        job.schedule_removal()
+    return True
+
+async def stop_notify(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Remove the job if the user changed their mind."""
+    chat_id = update.message.chat_id
+    job_removed = remove_job_if_exists(str(chat_id), context)
+    text = "Periodic update cancelled!" if job_removed else "No periodic update found."
+    await update.message.reply_text(text)
+    return ConversationHandler.END
 
 def main() -> None:
 
@@ -336,14 +367,15 @@ def main() -> None:
 
     )
 
-
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("get", start_auto_messaging))
+    application.add_handler(CommandHandler("stop", stop_notify))
     application.add_handler(conv_handler)
-
-
+    
     # Run the bot until the user presses Ctrl-C
 
     application.run_polling()
-
+    application.idle()
 
 
 if __name__ == "__main__":
