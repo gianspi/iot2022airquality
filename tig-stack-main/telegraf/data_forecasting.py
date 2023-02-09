@@ -24,6 +24,36 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
+
+# import cmdstanpy
+# cmdstanpy.install_cmdstan()
+# cmdstanpy.install_cmdstan(compiler=True) # only valid on Windows
+
+
+
+cmdstanpy_logger = logging.getLogger("cmdstanpy")
+cmdstanpy_logger.disabled = True
+
+# cmdstanpy_logger.handlers = []
+
+# cmdstanpy_logger.setLevel(logging.DEBUG)
+
+# handler = logging.FileHandler('all.log')
+
+# handler.setLevel(logging.DEBUG)
+
+# handler.setFormatter(
+#     logging.Formatter(
+#         '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+#         "%H:%M:%S",
+#     )
+# )
+
+
+cmdstanpy_logger.addHandler(handler)
+
+
 # DA LEVARE PIù AVANTI
 from IPython.display import display
 
@@ -44,7 +74,7 @@ FORECAST_MEASUREMENT = 'forecast'
 #FIELDS = ['hum', 'temp', 'conc', 'aqi', 'rssi']
 FIELDS_TO_FORECAST = ['hum', 'temp', 'conc']
 #FIELDS_TO_FORECAST = [FIELDS for _ in range(3)]
-TAGS = ['sensorID', 'lat', 'lon']
+TAGS = ['host', 'sensorID', 'lat', 'lon']
 
 X = 1
 
@@ -87,7 +117,7 @@ def query(field) :
         # ' import "timezone" ' \
         #         ' option location = timezone.location(name : "Europe/Rome") ' \
         query = ' from(bucket:' + BUCKET + ') ' \
-                ' |> range(start: -15m) ' \
+                ' |> range(start: -1d) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
                 ' |> filter(fn: (r) => r._field == "' + field + '") ' \
                 ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
@@ -218,19 +248,19 @@ def main() :
         for line in sys.stdin :
                 forecasted = True
                 line = line.rstrip('\n')
-
+                logging.info(line)
                 
                 line_lat, line_lon = getLineLatLon(line)
                 url = OPENWEATHER_REQUEST.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER, unit = UNIT)
-                display(url)
+                
+                logging.info(url)
                 try:
                     r = requests.get(url)
                     results = r.json()
-                    display(results)
+                    logging.info(results)
                     if results['cod'] == 200 :
                         line = addOutTemp(line,  results['main']['temp'])
                         logging.info(line)
-                        display(line)
                 except Exception:
                     logging.error("Error getting weather")
 
@@ -259,7 +289,7 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
-                        display(df)
+                        logging.info(df)
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
@@ -276,7 +306,9 @@ def main() :
 
                         columns = SENSOR_COLUMNS.copy()
                         df = df.drop(columns=columns)
+                        logging.info(df.columns.tolist())
                         df = df.rename(columns={field : PD_VALUE})
+                        logging.info(df.columns.tolist())
                         # fields = FIELDS_TO_FORECAST.copy()
                         # fields.remove(field)
                         # columns.extend(fields)
@@ -287,7 +319,7 @@ def main() :
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
-                        m.fit(df) # m.fit(dfToForecast)
+                        m.fit(df, algorithm='Newton') # m.fit(dfToForecast)
                         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
                         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
                         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
@@ -312,10 +344,12 @@ def main() :
 
                         forecast = pd.DataFrame([forecastDict])
                         #forecast = forecast.replace(['localhost'], socket.gethostname())
-                        display(forecast)
+                        logging.info(forecast.iloc[[0]])
+                        forecast_line = dfToInflux(forecast.iloc[[0]])
+                        logging.info(forecast_line)
                         #
                         # display(forecast.iloc[[0]])
-                        print(dfToInflux(forecast.iloc[[0]]))
+                        print(forecast_line)
                         sys.stdout.flush()
 
                 # for i in range(len(forecast.index)) :
@@ -332,5 +366,7 @@ def main() :
 
 if __name__ == '__main__' :
         main()
+        logging.info("SIAMO FUORI DAL MAIN, QUALCOSA è ANDATO STORTO !!!!!")
         # _write_client.__del__()
         client.__del__()
+        
