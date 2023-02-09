@@ -30,12 +30,14 @@ query_api = client.query_api()
 
 MESSAGE_FORMAT = {FIELDS[0][1:len(FIELDS[0]) - 1]: "Temperature: ", FIELDS[1][1:len(FIELDS[1]) - 1]: "Humidity: ", FIELDS[2][1:len(FIELDS[2]) - 1]: "Gas concentration: "}
 
+minutes = 15
+
 def queryMean():
 
         #logger.info("Log prova")
 
         query = ' from(bucket:' + BUCKET + ') ' \
-        ' |> range(start: -15m) ' \
+        ' |> range(start: -' + str(minutes) + 'm) ' \
         ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
         ' |> filter(fn: (r) => r._field == ' + FIELDS[0] + ' or r._field == ' + FIELDS[1] + ' or r._field == ' + FIELDS[2] + ') ' \
         ' |> mean() '
@@ -49,10 +51,13 @@ def queryMean():
 
         #logger.info(MESSAGE_FORMAT) 
         message = ""
-        for i in range(len(FIELDS)) :
-                #logger.info(result.at[i, "_field"])
-                message += "\n" if i > 0 else ""
-                message += MESSAGE_FORMAT[result.at[i, "_field"]] + str(result.at[i, "_value"])
+        if len(result.index) > 0 :
+                for i in range(len(FIELDS)) :
+                        #logger.info(result.at[i, "_field"])
+                        message += "\n" if i > 0 else ""
+                        message += MESSAGE_FORMAT[result.at[i, "_field"]] + str(result.at[i, "_value"])
+        else :
+                message = "There is no data to display in the last " + str(minutes) + " minutes."
 
         logger.info(message)
         return message
