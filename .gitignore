@@ -35,3 +35,5 @@ Temporary Items
 *.icloud
 
 # End of https://www.toptal.com/developers/gitignore/api/macos
+tig-stack-main/telegraf/log/telegraf.log
+tig-stack-main/telegraf/log/telegraf.log
