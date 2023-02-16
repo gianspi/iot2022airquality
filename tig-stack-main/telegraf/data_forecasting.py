@@ -244,7 +244,7 @@ def main() :
         for line in sys.stdin :
                 forecasted = True
                 line = line.rstrip('\n')
-                #logging.info(line)
+                logging.info(line)
                 
                 line_lat, line_lon = getLineLatLon(line)
                 url = OPENWEATHER_REQUEST.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER, unit = UNIT)

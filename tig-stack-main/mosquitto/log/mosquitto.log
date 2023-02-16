@@ -3058,3 +3058,126 @@
 1676558403: Client Arduino-042455c5 has exceeded timeout, disconnecting.
 1676558418: New connection from 172.21.0.1:40994 on port 1883.
 1676558418: New client connected from 172.21.0.1:40994 as Arduino-0425f8cd (p2, c1, k60, u'admin').
+1676558511: Client Arduino-0425f8cd has exceeded timeout, disconnecting.
+1676558525: New connection from 172.21.0.1:47628 on port 1883.
+1676558525: New client connected from 172.21.0.1:47628 as Arduino-04279bb0 (p2, c1, k60, u'admin').
+1676558619: Client Arduino-04279bb0 has exceeded timeout, disconnecting.
+1676558632: New connection from 172.21.0.1:44678 on port 1883.
+1676558632: New client connected from 172.21.0.1:44678 as Arduino-04293ea7 (p2, c1, k60, u'admin').
+1676558674: Client Telegraf-Consumer-mccqv disconnected.
+1676558674: mosquitto version 2.0.15 terminating
+1676558674: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1676558768: mosquitto version 2.0.15 starting
+1676558768: Config loaded from /mosquitto/config/mosquitto.conf.
+1676558768: Opening ipv4 listen socket on port 1883.
+1676558768: Opening ipv6 listen socket on port 1883.
+1676558768: mosquitto version 2.0.15 running
+1676558769: New connection from 172.22.0.5:58174 on port 1883.
+1676558769: New client connected from 172.22.0.5:58174 as Telegraf-Consumer-u9gSU (p2, c1, k60, u'admin').
+1676558808: New connection from 172.22.0.1:46748 on port 1883.
+1676558808: New client connected from 172.22.0.1:46748 as Arduino-042bef05 (p2, c1, k60, u'admin').
+1676558859: Client Arduino-042bef05 closed its connection.
+1676558861: New connection from 172.22.0.1:47636 on port 1883.
+1676558861: New client connected from 172.22.0.1:47636 as Arduino-042cc092 (p2, c1, k60, u'admin').
+1676558912: Client Arduino-042cc092 closed its connection.
+1676558914: New connection from 172.22.0.1:57276 on port 1883.
+1676558914: New client connected from 172.22.0.1:57276 as Arduino-042d921d (p2, c1, k60, u'admin').
+1676558966: Client Arduino-042d921d closed its connection.
+1676558969: New connection from 172.22.0.1:50632 on port 1883.
+1676558969: New client connected from 172.22.0.1:50632 as Arduino-042e6787 (p2, c1, k60, u'admin').
+1676559020: Client Arduino-042e6787 closed its connection.
+1676559022: New connection from 172.22.0.1:40246 on port 1883.
+1676559022: New client connected from 172.22.0.1:40246 as Arduino-042f390c (p2, c1, k60, u'admin').
+1676559074: Client Arduino-042f390c closed its connection.
+1676559076: New connection from 172.22.0.1:57596 on port 1883.
+1676559076: New client connected from 172.22.0.1:57596 as Arduino-04300a94 (p2, c1, k60, u'admin').
+1676559127: Client Arduino-04300a94 closed its connection.
+1676559129: New connection from 172.22.0.1:38064 on port 1883.
+1676559129: New client connected from 172.22.0.1:38064 as Arduino-0430dc20 (p2, c1, k60, u'admin').
+1676559181: Client Arduino-0430dc20 closed its connection.
+1676559183: New connection from 172.22.0.1:45282 on port 1883.
+1676559183: New client connected from 172.22.0.1:45282 as Arduino-0431adc3 (p2, c1, k60, u'admin').
+1676559234: Client Arduino-0431adc3 closed its connection.
+1676559236: New connection from 172.22.0.1:58354 on port 1883.
+1676559236: New client connected from 172.22.0.1:58354 as Arduino-04327f51 (p2, c1, k60, u'admin').
+1676559287: Client Arduino-04327f51 closed its connection.
+1676559289: New connection from 172.22.0.1:55112 on port 1883.
+1676559289: New client connected from 172.22.0.1:55112 as Arduino-043350da (p2, c1, k60, u'admin').
+1676559341: Client Arduino-043350da closed its connection.
+1676559343: New connection from 172.22.0.1:41252 on port 1883.
+1676559343: New client connected from 172.22.0.1:41252 as Arduino-0434225d (p2, c1, k60, u'admin').
+1676559394: Client Arduino-0434225d closed its connection.
+1676559396: New connection from 172.22.0.1:48184 on port 1883.
+1676559396: New client connected from 172.22.0.1:48184 as Arduino-0434f3f0 (p2, c1, k60, u'admin').
+1676559474: New connection from 172.22.0.1:44278 on port 1883.
+1676559474: New client connected from 172.22.0.1:44278 as Arduino-0000108b (p2, c1, k60, u'admin').
+1676559475: Client Arduino-0434f3f0 closed its connection.
+1676559487: New connection from 172.22.0.1:47224 on port 1883.
+1676559487: New client connected from 172.22.0.1:47224 as Arduino-00001235 (p2, c1, k60, u'admin').
+1676559496: Client Arduino-0000108b closed its connection.
+1676559669: Client Telegraf-Consumer-u9gSU disconnected.
+1676559669: mosquitto version 2.0.15 terminating
+1676559669: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1676559742: mosquitto version 2.0.15 starting
+1676559742: Config loaded from /mosquitto/config/mosquitto.conf.
+1676559742: Opening ipv4 listen socket on port 1883.
+1676559742: Opening ipv6 listen socket on port 1883.
+1676559742: mosquitto version 2.0.15 running
+1676559743: New connection from 172.23.0.5:55168 on port 1883.
+1676559743: New client connected from 172.23.0.5:55168 as Telegraf-Consumer-VA624 (p2, c1, k60, u'admin').
+1676559754: New connection from 172.23.0.1:59880 on port 1883.
+1676559754: New client connected from 172.23.0.1:59880 as Arduino-00042726 (p2, c1, k60, u'admin').
+1676560014: New connection from 172.23.0.1:34344 on port 1883.
+1676560014: New client connected from 172.23.0.1:34344 as Arduino-00001d37 (p2, c1, k60, u'admin').
+1676560014: Client Arduino-00042726 closed its connection.
+1676560108: New connection from 172.23.0.1:43138 on port 1883.
+1676560108: New client connected from 172.23.0.1:43138 as Arduino-00001162 (p2, c1, k60, u'admin').
+1676560121: Client Arduino-00001d37 closed its connection.
+1676560346: Client Telegraf-Consumer-VA624 disconnected.
+1676560346: mosquitto version 2.0.15 terminating
+1676560346: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1676560454: mosquitto version 2.0.15 starting
+1676560454: Config loaded from /mosquitto/config/mosquitto.conf.
+1676560454: Opening ipv4 listen socket on port 1883.
+1676560454: Opening ipv6 listen socket on port 1883.
+1676560454: mosquitto version 2.0.15 running
+1676560455: New connection from 172.24.0.1:55388 on port 1883.
+1676560455: New client connected from 172.24.0.1:55388 as Arduino-0005623f (p2, c1, k60, u'admin').
+1676560455: New connection from 172.24.0.5:35686 on port 1883.
+1676560455: New client connected from 172.24.0.5:35686 as Telegraf-Consumer-RF0eh (p2, c1, k60, u'admin').
+1676560651: New connection from 172.24.0.1:42906 on port 1883.
+1676560651: New client connected from 172.24.0.1:42906 as Arduino-00000e52 (p2, c1, k60, u'admin').
+1676560651: Client Arduino-0005623f closed its connection.
+1676560740: Client Telegraf-Consumer-RF0eh disconnected.
+1676560740: mosquitto version 2.0.15 terminating
+1676560740: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1676560806: mosquitto version 2.0.15 starting
+1676560806: Config loaded from /mosquitto/config/mosquitto.conf.
+1676560806: Opening ipv4 listen socket on port 1883.
+1676560806: Opening ipv6 listen socket on port 1883.
+1676560806: mosquitto version 2.0.15 running
+1676560807: New connection from 172.25.0.4:39764 on port 1883.
+1676560807: New client connected from 172.25.0.4:39764 as Telegraf-Consumer-v829A (p2, c1, k60, u'admin').
+1676560823: New connection from 172.25.0.1:38332 on port 1883.
+1676560823: New client connected from 172.25.0.1:38332 as Arduino-00001041 (p2, c1, k60, u'admin').
+1676560876: New connection from 172.25.0.1:50156 on port 1883.
+1676560876: New client connected from 172.25.0.1:50156 as Arduino-000010a6 (p2, c1, k60, u'admin').
+1676560885: Client Arduino-00001041 closed its connection.
+1676561073: Client Telegraf-Consumer-v829A disconnected.
+1676561073: mosquitto version 2.0.15 terminating
+1676561073: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1676561147: mosquitto version 2.0.15 starting
+1676561147: Config loaded from /mosquitto/config/mosquitto.conf.
+1676561147: Opening ipv4 listen socket on port 1883.
+1676561147: Opening ipv6 listen socket on port 1883.
+1676561147: mosquitto version 2.0.15 running
+1676561148: New connection from 172.26.0.4:60428 on port 1883.
+1676561148: New client connected from 172.26.0.4:60428 as Telegraf-Consumer-6qt7S (p2, c1, k60, u'admin').
+1676561157: New connection from 172.26.0.1:49852 on port 1883.
+1676561157: New client connected from 172.26.0.1:49852 as Arduino-000011bf (p2, c1, k60, u'admin').
+1676561368: Client Arduino-000011bf has exceeded timeout, disconnecting.
+1676561373: New connection from 172.26.0.1:49686 on port 1883.
+1676561373: New client connected from 172.26.0.1:49686 as Arduino-00001cbc (p2, c1, k60, u'admin').
+1676561403: New connection from 172.26.0.1:53698 on port 1883.
+1676561403: New client connected from 172.26.0.1:53698 as Arduino-00001135 (p2, c1, k60, u'admin').
+1676561404: Client Arduino-00001cbc closed its connection.
