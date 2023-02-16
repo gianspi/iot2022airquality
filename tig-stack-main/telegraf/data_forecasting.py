@@ -141,6 +141,15 @@ def query(field) :
         return result
 
 
+def getIndex(line) :
+        start_ix = line.find("index=") + len("index=")
+        end_ix = line.find(",", start_ix)
+        if end_ix == -1 :
+                end_ix = line.rfind(" ")
+        index = int(line[start_ix:end_ix])
+        return index
+
+
 def getLineLatLon(line) :
         start_lat = line.find("lat=") + len("lat=")
         start_lon = line.find("lon=") + len("lon=")
@@ -239,12 +248,20 @@ def main() :
         freq = str(number_freq) + FREQ
         #display(df)
 
+        index = 1
+        ix = 0
         
 
         for line in sys.stdin :
+                ix = getIndex(line)
+                logging.info("\n")
+                logging.info("newline number: " + ix)
+                logging.info("\n")
+                logging.info("cicle number: " + index)
+                logging.info("\n")
+                logging.info(line)
                 forecasted = True
                 line = line.rstrip('\n')
-                logging.info(line)
                 
                 line_lat, line_lon = getLineLatLon(line)
                 url = OPENWEATHER_REQUEST.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER, unit = UNIT)
@@ -281,6 +298,9 @@ def main() :
                 
 
                 for field in FIELDS_TO_FORECAST :
+                        logging.info("\n")
+                        logging.info("forecast " + field)
+                        logging.info("\n")
                         df = query(field)
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
@@ -347,6 +367,12 @@ def main() :
                         # display(forecast.iloc[[0]])
                         print(forecast_line)
                         sys.stdout.flush()
+
+                logging.info("\n")
+                logging.info("end newline number: " + ix)
+                logging.info("\n")
+                logging.info("end cicle number: " + index)
+                logging.info("\n")
 
                 # for i in range(len(forecast.index)) :
                 #         #display(forecast.iloc[[i]])
