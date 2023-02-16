@@ -146,6 +146,7 @@ def getIndex(line) :
         end_ix = line.find(",", start_ix)
         if end_ix == -1 :
                 end_ix = line.rfind(" ")
+        end_ix = end_ix - 1
         index = int(line[start_ix:end_ix])
         return index
 
@@ -253,7 +254,6 @@ def main() :
         
 
         for line in sys.stdin :
-                logging.info(line)
                 ix = getIndex(line)
                 logging.info("\n")
                 logging.info("newline number: " + ix)
