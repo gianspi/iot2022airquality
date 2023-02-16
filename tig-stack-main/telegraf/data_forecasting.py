@@ -249,18 +249,18 @@ def main() :
         freq = str(number_freq) + FREQ
         #display(df)
 
-        index = 1
-        ix = 0
+        # index = 1
+        # ix = 0
         
 
         for line in sys.stdin :
-                ix = getIndex(line)
-                logging.info("\n")
-                logging.info("newline number: " + str(ix))
-                logging.info("\n")
-                logging.info("cicle number: " + str(index))
-                logging.info("\n")
-                logging.info(line)
+                # ix = getIndex(line)
+                # logging.info("\n")
+                # logging.info("newline number: " + str(ix))
+                # logging.info("\n")
+                # logging.info("cicle number: " + str(index))
+                # logging.info("\n")
+                # logging.info(line)
                 forecasted = True
                 line = line.rstrip('\n')
                 
@@ -299,9 +299,9 @@ def main() :
                 
 
                 for field in FIELDS_TO_FORECAST :
-                        logging.info("\n")
-                        logging.info("forecast " + field)
-                        logging.info("\n")
+                        # logging.info("\n")
+                        # logging.info("forecast " + field)
+                        # logging.info("\n")
                         df = query(field)
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
@@ -369,12 +369,12 @@ def main() :
                         print(forecast_line)
                         sys.stdout.flush()
 
-                logging.info("\n")
-                logging.info("end newline number: " + str(ix))
-                logging.info("\n")
-                logging.info("end cicle number: " + str(index))
-                logging.info("\n")
-                ix = ix + 1
+                # logging.info("\n")
+                # logging.info("end newline number: " + str(ix))
+                # logging.info("\n")
+                # logging.info("end cicle number: " + str(index))
+                # logging.info("\n")
+                # ix = ix + 1
 
                 # for i in range(len(forecast.index)) :
                 #         #display(forecast.iloc[[i]])
