@@ -373,6 +373,7 @@ def main() :
                 logging.info("\n")
                 logging.info("end cicle number: " + index)
                 logging.info("\n")
+                ix = ix + 1
 
                 # for i in range(len(forecast.index)) :
                 #         #display(forecast.iloc[[i]])
