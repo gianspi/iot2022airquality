@@ -126,6 +126,7 @@ def query(field) :
         # result = result_to_dataframe(result_query)
 
         result = client.query_api().query_data_frame(query)
+        logging.info(result)
         if len(result.index) > 0 : 
                 result = result.rename(columns={TIME : PD_TIME})
                 #result = result.drop(columns=['host'])
