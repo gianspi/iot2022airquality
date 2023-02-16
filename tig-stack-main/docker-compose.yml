@@ -19,7 +19,7 @@ services:
       - ${TELEGRAF_CONF_PATH}:/etc/telegraf/telegraf.conf:rw
       - ${TELEGRAF_FORECAST_PATH}:/etc/telegraf/data_forecasting.py:x
       - ${TELEGRAF_LOG_PATH}:/var/log/telegraf/telegraf.log
-      #- ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json
+      - ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json
     env_file:
       - .env
     depends_on:
@@ -30,12 +30,27 @@ services:
 
   grafana:
     image: grafana/grafana-oss:latest
+    #build: ./grafana
     volumes:
       - grafana-storage:/var/lib/grafana:rw
+      - ./grafana/provisioning/:/etc/grafana/provisioning
+      - ./grafana/provisioning/datasources/:/usr/share/grafana/conf/provisioning/datasources
+      - ./grafana/provisioning/dashboards/:/usr/share/grafana/conf/provisioning/dashboards
+      - ./grafana/provisioning/alerting/:/usr/share/grafana/conf/provisioning/alerting
+      - ./grafana/pass/:/var/lib/grafana/dashboards/
     depends_on:
       - influxdb
     ports:
       - ${GRAFANA_PORT}:${GRAFANA_PORT}
+
+  # grafanasetup:
+  #   build: ./grafana
+  #   depends_on:
+  #     - grafana
+  #   restart: "no"
+  #   ports:
+  #     - 3030:3030
+  #   entrypoint: ["./entrypoint.sh"]
 
   mosquitto:
     image: eclipse-mosquitto:latest
@@ -48,13 +63,18 @@ services:
       - ${MQTT_PORT}:${MQTT_PORT}
       - 9001:9001
 
-  telegram:
-    build: ./telegram
-    depends_on:
-      - influxdb
-    ports:
-      - ${TELEGRAM_PORT}:${TELEGRAM_PORT}
-    restart: always
+  # telegram:
+  #   build: ./telegram
+  #   depends_on:
+  #     - influxdb
+  #   ports:
+  #     - ${TELEGRAM_PORT}:${TELEGRAM_PORT}
+  #   restart: always
+
+  # # arduino:
+  # #   build: ./arduino
+  # #   volumes:
+  # #     - ./arduino/IndoorMonitor.ino:/usr/src/app/IndoorMonitor.ino:w
 
 
 volumes:

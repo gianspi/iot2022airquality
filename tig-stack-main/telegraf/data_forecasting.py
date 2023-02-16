@@ -50,8 +50,7 @@ cmdstanpy_logger.disabled = True
 #     )
 # )
 
-
-cmdstanpy_logger.addHandler(handler)
+# cmdstanpy_logger.addHandler(handler)
 
 
 # DA LEVARE PIù AVANTI
@@ -154,10 +153,7 @@ def getLineLatLon(line) :
 
 def addOutTemp(line,  out_temp) :
         last_wp = line.rfind(" ")
-        display(last_wp)
-        display(line[0:last_wp])
         new_line = line[0:last_wp] + "," + OUT_TEMP_FIELD + "=" + str(out_temp) + line[last_wp:]
-        display(new_line)
         return new_line
 
 
@@ -248,19 +244,19 @@ def main() :
         for line in sys.stdin :
                 forecasted = True
                 line = line.rstrip('\n')
-                logging.info(line)
+                #logging.info(line)
                 
                 line_lat, line_lon = getLineLatLon(line)
                 url = OPENWEATHER_REQUEST.format(lat = line_lat, lon = line_lon, api = API_KEY_OPENWEATHER, unit = UNIT)
                 
-                logging.info(url)
+                #logging.info(url)
                 try:
                     r = requests.get(url)
                     results = r.json()
-                    logging.info(results)
+                    #logging.info(results)
                     if results['cod'] == 200 :
                         line = addOutTemp(line,  results['main']['temp'])
-                        logging.info(line)
+                        #logging.info(line)
                 except Exception:
                     logging.error("Error getting weather")
 
@@ -289,7 +285,7 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
-                        logging.info(df)
+                        #logging.info(df)
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
@@ -306,9 +302,9 @@ def main() :
 
                         columns = SENSOR_COLUMNS.copy()
                         df = df.drop(columns=columns)
-                        logging.info(df.columns.tolist())
+                        #logging.info(df.columns.tolist())
                         df = df.rename(columns={field : PD_VALUE})
-                        logging.info(df.columns.tolist())
+                        #logging.info(df.columns.tolist())
                         # fields = FIELDS_TO_FORECAST.copy()
                         # fields.remove(field)
                         # columns.extend(fields)
@@ -319,7 +315,7 @@ def main() :
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
-                        m.fit(df, algorithm='Newton') # m.fit(dfToForecast)
+                        m.fit(df, algorithm='Newton') # m.fit(df)
                         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
                         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
                         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
@@ -344,9 +340,9 @@ def main() :
 
                         forecast = pd.DataFrame([forecastDict])
                         #forecast = forecast.replace(['localhost'], socket.gethostname())
-                        logging.info(forecast.iloc[[0]])
+                        #logging.info(forecast.iloc[[0]])
                         forecast_line = dfToInflux(forecast.iloc[[0]])
-                        logging.info(forecast_line)
+                        #logging.info(forecast_line)
                         #
                         # display(forecast.iloc[[0]])
                         print(forecast_line)
