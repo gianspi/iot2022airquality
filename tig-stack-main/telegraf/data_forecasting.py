@@ -256,9 +256,9 @@ def main() :
         for line in sys.stdin :
                 ix = getIndex(line)
                 logging.info("\n")
-                logging.info("newline number: " + ix)
+                logging.info("newline number: " + str(ix))
                 logging.info("\n")
-                logging.info("cicle number: " + index)
+                logging.info("cicle number: " + str(index))
                 logging.info("\n")
                 logging.info(line)
                 forecasted = True
@@ -370,9 +370,9 @@ def main() :
                         sys.stdout.flush()
 
                 logging.info("\n")
-                logging.info("end newline number: " + ix)
+                logging.info("end newline number: " + str(ix))
                 logging.info("\n")
-                logging.info("end cicle number: " + index)
+                logging.info("end cicle number: " + str(index))
                 logging.info("\n")
                 ix = ix + 1
 
