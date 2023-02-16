@@ -63,13 +63,13 @@ services:
       - ${MQTT_PORT}:${MQTT_PORT}
       - 9001:9001
 
-  # telegram:
-  #   build: ./telegram
-  #   depends_on:
-  #     - influxdb
-  #   ports:
-  #     - ${TELEGRAM_PORT}:${TELEGRAM_PORT}
-  #   restart: always
+  telegram:
+    build: ./telegram
+    depends_on:
+      - influxdb
+    ports:
+      - ${TELEGRAM_PORT}:${TELEGRAM_PORT}
+    restart: always
 
   # # arduino:
   # #   build: ./arduino
