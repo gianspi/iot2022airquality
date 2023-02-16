@@ -253,6 +253,7 @@ def main() :
         
 
         for line in sys.stdin :
+                logging.info(line)
                 ix = getIndex(line)
                 logging.info("\n")
                 logging.info("newline number: " + ix)
