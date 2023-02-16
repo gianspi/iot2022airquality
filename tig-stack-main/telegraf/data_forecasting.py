@@ -118,8 +118,8 @@ def query(field) :
         query = ' from(bucket:' + BUCKET + ') ' \
                 ' |> range(start: -1d) ' \
                 ' |> filter(fn: (r) => r._measurement == ' + AIR_QUALITY + ') ' \
-                ' |> filter(fn: (r) => r._field == "' + field + '") '
-                #' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
+                ' |> filter(fn: (r) => r._field == "' + field + '") ' \
+                ' |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") '
 
         # UTILE PER NON FARE I PASSAGGI INTERMEDI
         # result_query = client.query_api().query(query=query)
