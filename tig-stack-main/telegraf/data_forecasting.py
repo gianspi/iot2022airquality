@@ -260,8 +260,8 @@ def main() :
                 # logging.info("newline number: " + str(ix))
                 # logging.info("\n")
                 # logging.info("cicle number: " + str(index))
-                # logging.info("\n")
-                # logging.info(line)
+                logging.info("\n")
+                logging.info(line)
                 forecasted = True
                 line = line.rstrip('\n')
                 
@@ -307,7 +307,7 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
-                        #logging.info(df)
+                        # logging.info(df)
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
@@ -337,6 +337,8 @@ def main() :
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
+                        logging.info("\n")
+                        logging.info(df)
                         m.fit(df, algorithm='Newton') # m.fit(df)
                         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
                         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
