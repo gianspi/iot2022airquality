@@ -162,7 +162,7 @@ def getLineLatLon(line) :
         return lat, lon
 
 
-def addOutTemp(line,  out_temp) :
+def addOutTemp(line, out_temp) :
         last_wp = line.rfind(" ")
         new_line = line[0:last_wp] + "," + OUT_TEMP_FIELD + "=" + str(out_temp) + line[last_wp:]
         return new_line
@@ -270,6 +270,9 @@ def main() :
                 # logging.info("newline number: " + str(ix))
                 # logging.info("\n")
                 # logging.info("cicle number: " + str(index))
+                logging.info("\n")
+                logging.info(datetime.now())
+                
                 logging.info("\n")
                 logging.info(line)
                 forecasted = True
