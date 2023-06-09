@@ -174,7 +174,7 @@ def printDatetime(line) :
         t = line[last_wp:len(line[last_wp:]) - 9]
         logging.info(t)
         logging.info("\n")
-        logging.info(datetime.fromtimestamp(t))
+        logging.info(datetime.fromtimestamp(int(t)))
         logging.info("\n")
 
 
