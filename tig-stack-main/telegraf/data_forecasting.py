@@ -168,6 +168,13 @@ def addOutTemp(line,  out_temp) :
         return new_line
 
 
+def printDatetime(line) :
+        last_wp = line.rfind(" ")
+        logging.info("\n")
+        logging.info(datetime.fromtimestamp(int(line[last_wp:])))
+        logging.info("\n")
+
+
 def parseNewLine(newline) :
         dictNewLine = {}
 
@@ -279,7 +286,7 @@ def main() :
                 except Exception:
                     logging.error("Error getting weather")
 
-
+                printDatetime(line)
                 logging.info("\n")
                 logging.info(line)
                 logging.info("\n")
