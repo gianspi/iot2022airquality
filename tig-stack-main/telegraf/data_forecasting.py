@@ -307,7 +307,9 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
-                        # logging.info(df)
+                        logging.info("\n")
+                        logging.info(df.columns)
+                        logging.info("\n")
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
@@ -322,8 +324,14 @@ def main() :
                                 # interval_width=1.0
                                 )
 
+                        logging.info("\n")
+                        logging.info(df.columns)
+                        logging.info("\n")
                         columns = SENSOR_COLUMNS.copy()
                         df = df.drop(columns=columns)
+                        logging.info("\n")
+                        logging.info(df.columns)
+                        logging.info("\n")
                         #logging.info(df.columns.tolist())
                         df = df.rename(columns={field : PD_VALUE})
                         #logging.info(df.columns.tolist())
