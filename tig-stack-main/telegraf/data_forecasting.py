@@ -97,7 +97,7 @@ PD_VALUE = 'y'
 FORECAST_VALUE = 'yhat'
 
 FREQ = 'S'
-
+#API_KEY_OPENWEATHER = 'c1e149dbf4a6201212455140073ae1d3'
 API_KEY_OPENWEATHER = ''
 OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}&units={unit}'
 OUT_TEMP_FIELD = 'out'
