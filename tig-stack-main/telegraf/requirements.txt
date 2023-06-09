@@ -4,3 +4,4 @@ influxdb-client==1.36.0
 prophet==1.1.1
 DateTime==5.0
 ipython==8.9.0
+ntplib==0.4.0
