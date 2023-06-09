@@ -10,6 +10,9 @@ import requests
 
 import sys
 
+import ntplib
+
+
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -55,6 +58,9 @@ cmdstanpy_logger.disabled = True
 
 # DA LEVARE PIù AVANTI
 from IPython.display import display
+
+c = ntplib.NTPClient()
+
 
 token = "LUaijeA_-hxGtLkz9axuiCVt51pgGPakizsI7wESL5QAe0vEbr7z1CUoK42Jj0s8lrKT6UWzDmi32hc9E8g-Tw--"
 BUCKET = '"Air_Quality"'
@@ -271,7 +277,13 @@ def main() :
                 # logging.info("\n")
                 # logging.info("cicle number: " + str(index))
                 logging.info("\n")
-                logging.info(datetime.now())
+                # Provide the respective ntp server ip in below function
+                response = c.request('pool.ntp.org', version=3)
+                #response.offset
+                logging.info(response)
+                logging.info("\n")
+                logging.info(datetime.fromtimestamp(response.tx_time, timezone.utc))
+                
                 
                 logging.info("\n")
                 logging.info(line)
