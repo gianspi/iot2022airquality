@@ -171,7 +171,7 @@ def addOutTemp(line,  out_temp) :
 def printDatetime(line) :
         last_wp = line.rfind(" ")
         logging.info("\n")
-        logging.info(datetime.fromtimestamp(int(line[last_wp:])))
+        logging.info(datetime.fromtimestamp(line[last_wp:]))
         logging.info("\n")
 
 
