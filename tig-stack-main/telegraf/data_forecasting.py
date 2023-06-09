@@ -279,6 +279,10 @@ def main() :
                 except Exception:
                     logging.error("Error getting weather")
 
+
+                logging.info("\n")
+                logging.info(line)
+                logging.info("\n")
                 print(line)
                 sys.stdout.flush()
 
@@ -324,9 +328,7 @@ def main() :
                                 # interval_width=1.0
                                 )
 
-                        logging.info("\n")
-                        logging.info(df.columns)
-                        logging.info("\n")
+                        
                         columns = SENSOR_COLUMNS.copy()
                         df = df.drop(columns=columns)
                         logging.info("\n")
