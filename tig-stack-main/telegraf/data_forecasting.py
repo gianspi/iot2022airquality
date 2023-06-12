@@ -5,7 +5,7 @@ temp_dir = tempfile.TemporaryDirectory()
 os.environ['MPLCONFIGDIR'] = temp_dir.name
 import pandas as pd
 from datetime import datetime, timezone
-#from prophet import Prophet, diagnostics
+from prophet import Prophet, diagnostics
 import requests
 
 import sys
@@ -59,8 +59,6 @@ cmdstanpy_logger.disabled = True
 # DA LEVARE PIù AVANTI
 from IPython.display import display
 
-c = ntplib.NTPClient()
-
 
 token = "LUaijeA_-hxGtLkz9axuiCVt51pgGPakizsI7wESL5QAe0vEbr7z1CUoK42Jj0s8lrKT6UWzDmi32hc9E8g-Tw--"
 BUCKET = '"Air_Quality"'
@@ -109,6 +107,9 @@ OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}
 OUT_TEMP_FIELD = 'out'
 UNIT = 'metric'
 
+TIMESTAMP_CIPHER_BASE = 10
+MS_PRECISION = 1
+CIPHER = 3
 
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
 # def result_to_dataframe(result):
@@ -175,13 +176,41 @@ def addOutTemp(line, out_temp) :
 
 
 def printDatetime(line) :
-        last_wp = line.rfind(" ")
+        WP = " "
+        last_wp = line.rfind(WP)
+        PACKET_NUMBER_STRING = "packet_number="
+        packet_number = line.rfind(PACKET_NUMBER_STRING)
+        pn = line[packet_number:]
+        first_wp_pn = pn.find(WP)
+        pn = pn[:first_wp_pn]
         t = line[last_wp:]
-        t = t[:len(t)-9]
+        t = t[:len(t)-6]
         #logging.info(t[:len(t)-9])
         logging.info("\n")
-        logging.info(datetime.fromtimestamp(int(t)))
+        logging.info(datetime.fromtimestamp(int(t) / 1000.0))
         logging.info("\n")
+
+
+def addDelayAnalysis(delay_df, line, arriving_time) :
+        WP = " "
+        last_wp = line.rfind(WP)
+        t = line[last_wp + 1:]
+        t_ms = t[:TIMESTAMP_CIPHER_BASE + (CIPHER * MS_PRECISION)]
+        PACKET_NUMBER_STRING = "packet_number="
+        packet_number = line.rfind(PACKET_NUMBER_STRING)
+        pn = line[packet_number + len(PACKET_NUMBER_STRING):]
+        first_wp_pn = pn.find('i' + WP)
+        pn = pn[:first_wp_pn]
+        logging.info("\n")
+        logging.info(t_ms)
+        logging.info("\n")
+        delay = arriving_time - int(t_ms)
+        logging.info(delay)
+        logging.info("\n")
+        delay_df = delay_df.append({"packet_number": pn, "delay": delay}, ignore_index=True)
+        logging.info(delay_df)
+        logging.info("\n")
+        return delay_df
 
 
 def parseNewLine(newline) :
@@ -268,7 +297,7 @@ def main() :
 
         # index = 1
         # ix = 0
-        
+        delay_df = pd.DataFrame(columns=["packet_number", "delay"])
 
         for line in sys.stdin :
                 # ix = getIndex(line)
@@ -277,10 +306,12 @@ def main() :
                 # logging.info("\n")
                 # logging.info("cicle number: " + str(index))
                 logging.info("\n")
+                c = ntplib.NTPClient()
                 # Provide the respective ntp server ip in below function
                 response = c.request('pool.ntp.org', version=3)
                 #response.offset
-                logging.info(response)
+                logging.info(response.tx_time)
+                logging.info(int(response.tx_time * 1000))
                 logging.info("\n")
                 logging.info(datetime.fromtimestamp(response.tx_time, timezone.utc))
                 
@@ -305,6 +336,7 @@ def main() :
                     logging.error("Error getting weather")
 
                 printDatetime(line)
+                delay_df = addDelayAnalysis(delay_df, line, int(response.tx_time * 1000))
                 logging.info("\n")
                 logging.info(line)
                 logging.info("\n")
@@ -344,68 +376,68 @@ def main() :
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
                         forecastDict[SENSOR_COLUMNS[LON]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LON]]
 
-                        # m = Prophet(yearly_seasonality=False,
-                        #         weekly_seasonality=False,
-                        #         daily_seasonality=30,
-                        #         n_changepoints=35,
-                        #         changepoint_range=1,
-                        #         changepoint_prior_scale=0.01
-                        #         # interval_width=1.0
-                        #         )
+                        m = Prophet(yearly_seasonality=False,
+                                weekly_seasonality=False,
+                                daily_seasonality=30,
+                                n_changepoints=35,
+                                changepoint_range=1,
+                                changepoint_prior_scale=0.01
+                                # interval_width=1.0
+                                )
 
                         
-                        # columns = SENSOR_COLUMNS.copy()
-                        # df = df.drop(columns=columns)
-                        # logging.info("\n")
-                        # logging.info(df.columns)
-                        # logging.info("\n")
-                        # #logging.info(df.columns.tolist())
-                        # df = df.rename(columns={field : PD_VALUE})
-                        # #logging.info(df.columns.tolist())
-                        # # fields = FIELDS_TO_FORECAST.copy()
-                        # # fields.remove(field)
-                        # # columns.extend(fields)
-                        # # dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
-                        # # dfToForecast = df.drop(columns=columns)
-                        # # dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
-                        # # #display(dfToForecast)
+                        columns = SENSOR_COLUMNS.copy()
+                        df = df.drop(columns=columns)
+                        logging.info("\n")
+                        logging.info(df.columns)
+                        logging.info("\n")
+                        #logging.info(df.columns.tolist())
+                        df = df.rename(columns={field : PD_VALUE})
+                        #logging.info(df.columns.tolist())
+                        # fields = FIELDS_TO_FORECAST.copy()
+                        # fields.remove(field)
+                        # columns.extend(fields)
+                        # dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
+                        # dfToForecast = df.drop(columns=columns)
+                        # dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
+                        # #display(dfToForecast)
 
-                        # # # DataFrame must have the timestamp column as an index for the client. 
-                        # # df.set_index("_time")
-                        # logging.info("\n")
-                        # logging.info(df)
-                        # m.fit(df, algorithm='Newton') # m.fit(df)
-                        # #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
-                        # # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
-                        # future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
-                        # # future.tail()
-                        # tmp = m.predict(future)
+                        # # DataFrame must have the timestamp column as an index for the client. 
+                        # df.set_index("_time")
+                        logging.info("\n")
+                        logging.info(df)
+                        m.fit(df, algorithm='Newton') # m.fit(df)
+                        #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
+                        # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
+                        future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
+                        # future.tail()
+                        tmp = m.predict(future)
                         
-                        # if PD_TIME not in forecastDict :
-                        #         forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
+                        if PD_TIME not in forecastDict :
+                                forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
 
-                        # #tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
-                        # #display(tmp)
+                        #tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
+                        #display(tmp)
                         
-                        # # FORSE USARE .update()
-                        # forecastDict[field] = tmp.at[0, FORECAST_VALUE] #field[1:-1]
+                        # FORSE USARE .update()
+                        forecastDict[field] = tmp.at[0, FORECAST_VALUE] #field[1:-1]
 
                         
-                # #forecast['_measurement'] = FORECAST_MEASUREMENT
-                # #forecast['sensorID'] = "a57"
-                # #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
-                # #forecast['_time'] = pd.to_datetime(forecast['_time'])
-                # if forecasted :
+                #forecast['_measurement'] = FORECAST_MEASUREMENT
+                #forecast['sensorID'] = "a57"
+                #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
+                #forecast['_time'] = pd.to_datetime(forecast['_time'])
+                if forecasted :
 
-                #         forecast = pd.DataFrame([forecastDict])
-                #         #forecast = forecast.replace(['localhost'], socket.gethostname())
-                #         #logging.info(forecast.iloc[[0]])
-                #         forecast_line = dfToInflux(forecast.iloc[[0]])
-                #         #logging.info(forecast_line)
-                #         #
-                #         # display(forecast.iloc[[0]])
-                #         print(forecast_line)
-                #         sys.stdout.flush()
+                        forecast = pd.DataFrame([forecastDict])
+                        #forecast = forecast.replace(['localhost'], socket.gethostname())
+                        #logging.info(forecast.iloc[[0]])
+                        forecast_line = dfToInflux(forecast.iloc[[0]])
+                        #logging.info(forecast_line)
+                        #
+                        # display(forecast.iloc[[0]])
+                        print(forecast_line)
+                        sys.stdout.flush()
 
                 # logging.info("\n")
                 # logging.info("end newline number: " + str(ix))
