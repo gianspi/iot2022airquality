@@ -186,9 +186,9 @@ def printDatetime(line) :
         t = line[last_wp:]
         t = t[:len(t)-6]
         #logging.info(t[:len(t)-9])
-        logging.info("\n")
-        logging.info(datetime.fromtimestamp(int(t) / 1000.0))
-        logging.info("\n")
+        # logging.info("\n")
+        # logging.info(datetime.fromtimestamp(int(t) / 1000.0))
+        # logging.info("\n")
 
 
 def addDelayAnalysis(delay_df, line, arriving_time) :
@@ -201,15 +201,15 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         pn = line[packet_number + len(PACKET_NUMBER_STRING):]
         first_wp_pn = pn.find('i' + WP)
         pn = pn[:first_wp_pn]
-        logging.info("\n")
-        logging.info(t_ms)
-        logging.info("\n")
+        # logging.info("\n")
+        # logging.info(t_ms)
+        # logging.info("\n")
         delay = arriving_time - int(t_ms)
-        logging.info(delay)
-        logging.info("\n")
+        # logging.info(delay)
+        # logging.info("\n")
         delay_df = delay_df.append({"packet_number": pn, "delay": delay}, ignore_index=True)
-        logging.info(delay_df)
-        logging.info("\n")
+        # logging.info(delay_df)
+        # logging.info("\n")
         return delay_df
 
 
@@ -305,19 +305,19 @@ def main() :
                 # logging.info("newline number: " + str(ix))
                 # logging.info("\n")
                 # logging.info("cicle number: " + str(index))
-                logging.info("\n")
+                # logging.info("\n")
                 c = ntplib.NTPClient()
                 # Provide the respective ntp server ip in below function
                 response = c.request('pool.ntp.org', version=3)
                 #response.offset
-                logging.info(response.tx_time)
-                logging.info(int(response.tx_time * 1000))
-                logging.info("\n")
-                logging.info(datetime.fromtimestamp(response.tx_time, timezone.utc))
+                # logging.info(response.tx_time)
+                # logging.info(int(response.tx_time * 1000))
+                # logging.info("\n")
+                # logging.info(datetime.fromtimestamp(response.tx_time, timezone.utc))
                 
                 
-                logging.info("\n")
-                logging.info(line)
+                # logging.info("\n")
+                # logging.info(line)
                 forecasted = True
                 line = line.rstrip('\n')
                 
@@ -368,9 +368,9 @@ def main() :
                         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
                                 forecasted = False
                                 continue
-                        logging.info("\n")
-                        logging.info(df.columns)
-                        logging.info("\n")
+                        # logging.info("\n")
+                        # logging.info(df.columns)
+                        # logging.info("\n")
 
                         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
                         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
