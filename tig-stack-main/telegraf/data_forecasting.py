@@ -360,84 +360,84 @@ def main() :
                 #df['ds'] = pd.to_datetime(df['ds']).apply(lambda t : t.replace(tzinfo=None))
                 
 
-                for field in FIELDS_TO_FORECAST :
-                        # logging.info("\n")
-                        # logging.info("forecast " + field)
-                        # logging.info("\n")
-                        df = query(field)
-                        if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
-                                forecasted = False
-                                continue
-                        # logging.info("\n")
-                        # logging.info(df.columns)
-                        # logging.info("\n")
+                # for field in FIELDS_TO_FORECAST :
+                #         # logging.info("\n")
+                #         # logging.info("forecast " + field)
+                #         # logging.info("\n")
+                #         df = query(field)
+                #         if (df is None or (df is not None and len(df.index) < MIN_ROWS)) :
+                #                 forecasted = False
+                #                 continue
+                #         # logging.info("\n")
+                #         # logging.info(df.columns)
+                #         # logging.info("\n")
 
-                        forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
-                        forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
-                        forecastDict[SENSOR_COLUMNS[LON]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LON]]
+                #         forecastDict[SENSOR_COLUMNS[SENSOR_ID]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[SENSOR_ID]]
+                #         forecastDict[SENSOR_COLUMNS[LAT]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LAT]]
+                #         forecastDict[SENSOR_COLUMNS[LON]] = df.at[len(df.index) - 1, SENSOR_COLUMNS[LON]]
 
-                        m = Prophet(yearly_seasonality=False,
-                                weekly_seasonality=False,
-                                daily_seasonality=30,
-                                n_changepoints=35,
-                                changepoint_range=1,
-                                changepoint_prior_scale=0.01
-                                # interval_width=1.0
-                                )
-
-                        
-                        columns = SENSOR_COLUMNS.copy()
-                        df = df.drop(columns=columns)
-                        logging.info("\n")
-                        logging.info(df.columns)
-                        logging.info("\n")
-                        #logging.info(df.columns.tolist())
-                        df = df.rename(columns={field : PD_VALUE})
-                        #logging.info(df.columns.tolist())
-                        # fields = FIELDS_TO_FORECAST.copy()
-                        # fields.remove(field)
-                        # columns.extend(fields)
-                        # dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
-                        # dfToForecast = df.drop(columns=columns)
-                        # dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
-                        # #display(dfToForecast)
-
-                        # # DataFrame must have the timestamp column as an index for the client. 
-                        # df.set_index("_time")
-                        logging.info("\n")
-                        logging.info(df)
-                        m.fit(df, algorithm='Newton') # m.fit(df)
-                        #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
-                        # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
-                        future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
-                        # future.tail()
-                        tmp = m.predict(future)
-                        
-                        if PD_TIME not in forecastDict :
-                                forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
-
-                        #tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
-                        #display(tmp)
-                        
-                        # FORSE USARE .update()
-                        forecastDict[field] = tmp.at[0, FORECAST_VALUE] #field[1:-1]
+                #         m = Prophet(yearly_seasonality=False,
+                #                 weekly_seasonality=False,
+                #                 daily_seasonality=30,
+                #                 n_changepoints=35,
+                #                 changepoint_range=1,
+                #                 changepoint_prior_scale=0.01
+                #                 # interval_width=1.0
+                #                 )
 
                         
-                #forecast['_measurement'] = FORECAST_MEASUREMENT
-                #forecast['sensorID'] = "a57"
-                #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
-                #forecast['_time'] = pd.to_datetime(forecast['_time'])
-                if forecasted :
+                #         columns = SENSOR_COLUMNS.copy()
+                #         df = df.drop(columns=columns)
+                #         logging.info("\n")
+                #         logging.info(df.columns)
+                #         logging.info("\n")
+                #         #logging.info(df.columns.tolist())
+                #         df = df.rename(columns={field : PD_VALUE})
+                #         #logging.info(df.columns.tolist())
+                #         # fields = FIELDS_TO_FORECAST.copy()
+                #         # fields.remove(field)
+                #         # columns.extend(fields)
+                #         # dfToForecast = df.loc[(df[SENSOR_COLUMNS[SENSOR_ID]] == forecastDict[SENSOR_COLUMNS[SENSOR_ID]]) & (df[SENSOR_COLUMNS[LAT]] == forecastDict[SENSOR_COLUMNS[LAT]]) & (df[SENSOR_COLUMNS[LON]] == forecastDict[SENSOR_COLUMNS[LON]])]
+                #         # dfToForecast = df.drop(columns=columns)
+                #         # dfToForecast = dfToForecast.rename(columns={field : PD_VALUE}) #field[1:-1]
+                #         # #display(dfToForecast)
 
-                        forecast = pd.DataFrame([forecastDict])
-                        #forecast = forecast.replace(['localhost'], socket.gethostname())
-                        #logging.info(forecast.iloc[[0]])
-                        forecast_line = dfToInflux(forecast.iloc[[0]])
-                        #logging.info(forecast_line)
-                        #
-                        # display(forecast.iloc[[0]])
-                        print(forecast_line)
-                        sys.stdout.flush()
+                #         # # DataFrame must have the timestamp column as an index for the client. 
+                #         # df.set_index("_time")
+                #         logging.info("\n")
+                #         logging.info(df)
+                #         m.fit(df, algorithm='Newton') # m.fit(df)
+                #         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
+                #         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
+                #         future = m.make_future_dataframe(periods=X, freq=freq, include_history=False)
+                #         # future.tail()
+                #         tmp = m.predict(future)
+                        
+                #         if PD_TIME not in forecastDict :
+                #                 forecastDict[TIME] = tmp.at[0, PD_TIME] #tmp.iloc[0]['ds']
+
+                #         #tmp = tmp.rename(columns={FORECAST_VALUE : field}) # additive_terms , multiplicative_terms , yhat , trend
+                #         #display(tmp)
+                        
+                #         # FORSE USARE .update()
+                #         forecastDict[field] = tmp.at[0, FORECAST_VALUE] #field[1:-1]
+
+                        
+                # #forecast['_measurement'] = FORECAST_MEASUREMENT
+                # #forecast['sensorID'] = "a57"
+                # #forecast['_time'] = time # datetime.fromtimestamp(int((df.iloc[len(df.index) - 1]['_time'].timestamp() + 10) * NS) // NS)
+                # #forecast['_time'] = pd.to_datetime(forecast['_time'])
+                # if forecasted :
+
+                #         forecast = pd.DataFrame([forecastDict])
+                #         #forecast = forecast.replace(['localhost'], socket.gethostname())
+                #         #logging.info(forecast.iloc[[0]])
+                #         forecast_line = dfToInflux(forecast.iloc[[0]])
+                #         #logging.info(forecast_line)
+                #         #
+                #         # display(forecast.iloc[[0]])
+                #         print(forecast_line)
+                #         sys.stdout.flush()
 
                 # logging.info("\n")
                 # logging.info("end newline number: " + str(ix))
