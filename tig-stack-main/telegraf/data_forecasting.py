@@ -355,7 +355,7 @@ def main() :
                 logging.info("\n")
                 logging.info(delay_df)
                 logging.info("\n")
-                logging.info("PACKET_LOST : ", packet_lost)
+                logging.info("PACKET_LOST : " + str(packet_lost))
                 logging.info("\n")
                 print(line)
                 sys.stdout.flush()
