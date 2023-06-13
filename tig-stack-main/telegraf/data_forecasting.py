@@ -111,6 +111,10 @@ TIMESTAMP_CIPHER_BASE = 10
 MS_PRECISION = 1
 CIPHER = 3
 
+
+old_packet_number = -1
+packet_lost = 0
+
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
 # def result_to_dataframe(result):
 #     raw = []
@@ -204,10 +208,13 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         # logging.info("\n")
         # logging.info(t_ms)
         # logging.info("\n")
-        delay = arriving_time - int(t_ms)
+        delay = arriving_time - (int(t_ms) * 1000)
         # logging.info(delay)
         # logging.info("\n")
         delay_df = delay_df.append({"packet_number": pn, "delay": delay}, ignore_index=True)
+        if old_packet_number != pn + 1 :
+                packet_lost = packet_lost + 1
+        old_packet_number = pn
         # logging.info(delay_df)
         # logging.info("\n")
         return delay_df
@@ -339,6 +346,10 @@ def main() :
                 delay_df = addDelayAnalysis(delay_df, line, int(response.tx_time * 1000))
                 logging.info("\n")
                 logging.info(line)
+                logging.info("\n")
+                logging.info(delay_df)
+                logging.info("\n")
+                logging.info("PACKET_LOST : ", packet_lost)
                 logging.info("\n")
                 print(line)
                 sys.stdout.flush()
