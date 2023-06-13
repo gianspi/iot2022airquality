@@ -214,9 +214,9 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         # logging.info(delay)
         # logging.info("\n")
         delay_df = delay_df.append({"packet_number": pn, "delay": delay}, ignore_index=True)
-        if old_packet_number != pn + 1 :
+        if old_packet_number != int(pn) + 1 :
                 packet_lost = packet_lost + 1
-        old_packet_number = pn
+        old_packet_number = int(pn)
         # logging.info(delay_df)
         # logging.info("\n")
         return delay_df
