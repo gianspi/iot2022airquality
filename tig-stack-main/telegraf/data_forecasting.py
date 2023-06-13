@@ -201,7 +201,7 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         WP = " "
         last_wp = line.rfind(WP)
         t = line[last_wp + 1:]
-        t_ms = t[:TIMESTAMP_CIPHER_BASE] #  + (CIPHER * MS_PRECISION)
+        t_ms = t[:TIMESTAMP_CIPHER_BASE + (CIPHER * MS_PRECISION)]
         PACKET_NUMBER_STRING = "packet_number="
         packet_number = line.rfind(PACKET_NUMBER_STRING)
         pn = line[packet_number + len(PACKET_NUMBER_STRING):]
@@ -210,12 +210,12 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         # logging.info("\n")
         # logging.info(t_ms)
         # logging.info("\n")
-        delay = arriving_time - (int(t_ms) * 1000)
+        delay = arriving_time - int(t_ms)
         # logging.info(delay)
         # logging.info("\n")
         delay_df = delay_df.append({"packet_number": pn, "delay": delay}, ignore_index=True)
-        if old_packet_number != int(pn) + 1 :
-                packet_lost = packet_lost + 1
+        if old_packet_number + 1 != int(pn) :
+                packet_lost = packet_lost + (int(pn) - old_packet_number)
         old_packet_number = int(pn)
         # logging.info(delay_df)
         # logging.info("\n")
@@ -348,7 +348,7 @@ def main() :
                 except Exception:
                     logging.error("Error getting weather")
 
-                printDatetime(line)
+                #printDatetime(line)
                 delay_df = addDelayAnalysis(delay_df, line, int(response.tx_time * 1000))
                 logging.info("\n")
                 logging.info(line)
