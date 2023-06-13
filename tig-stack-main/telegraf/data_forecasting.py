@@ -112,8 +112,8 @@ MS_PRECISION = 1
 CIPHER = 3
 
 
-old_packet_number = -1
-packet_lost = 0
+global old_packet_number
+global packet_lost
 
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
 # def result_to_dataframe(result):
@@ -196,6 +196,8 @@ def printDatetime(line) :
 
 
 def addDelayAnalysis(delay_df, line, arriving_time) :
+        global old_packet_number
+        global packet_lost
         WP = " "
         last_wp = line.rfind(WP)
         t = line[last_wp + 1:]
@@ -292,6 +294,10 @@ def dfToInflux(df) :
 
 
 def main() :
+        global old_packet_number
+        global packet_lost
+        old_packet_number = -1
+        packet_lost = 0
         forecasted = True
         #df = query()
         #columns = FIELDS_TO_FORECAST.copy()
