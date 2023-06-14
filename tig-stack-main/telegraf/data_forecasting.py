@@ -205,7 +205,7 @@ def addDelayAnalysis(delay_df, line, arriving_time) :
         PACKET_NUMBER_STRING = "packet_number="
         packet_number = line.rfind(PACKET_NUMBER_STRING)
         pn = line[packet_number + len(PACKET_NUMBER_STRING):]
-        first_wp_pn = pn.find('i' + WP)
+        first_wp_pn = pn.find('i')
         pn = pn[:first_wp_pn]
         # logging.info("\n")
         # logging.info(t_ms)
