@@ -100,7 +100,7 @@ PD_TIME = 'ds'
 PD_VALUE = 'y'
 FORECAST_VALUE = 'yhat'
 
-FREQ = 'S'
+FREQ = 'min'
 #API_KEY_OPENWEATHER = 'c1e149dbf4a6201212455140073ae1d3'
 API_KEY_OPENWEATHER = ''
 OPENWEATHER_REQUEST = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}&units={unit}'
@@ -112,8 +112,8 @@ MS_PRECISION = 1
 CIPHER = 3
 
 
-global old_packet_number
-global packet_lost
+old_packet_number = -1
+packet_lost = 0
 
 # VEDERE DI FARE LA QUERY CON UN FIELD SPECIFICO
 # def result_to_dataframe(result):
@@ -296,6 +296,7 @@ def dfToInflux(df) :
 def main() :
         global old_packet_number
         global packet_lost
+        global delay_df
         old_packet_number = -1
         packet_lost = 0
         forecasted = True
@@ -304,7 +305,7 @@ def main() :
         #columns.extend(TIME)
         #forecast = pd.DataFrame(columns=columns)
         forecastDict = dict(_measurement=FORECAST_MEASUREMENT, host=HOST)
-        number_freq = 10
+        number_freq = 1
         freq = str(number_freq) + FREQ
         #display(df)
 
@@ -350,13 +351,13 @@ def main() :
 
                 #printDatetime(line)
                 delay_df = addDelayAnalysis(delay_df, line, int(response.tx_time * 1000))
-                logging.info("\n")
-                logging.info(line)
-                logging.info("\n")
-                logging.info(delay_df)
-                logging.info("\n")
-                logging.info("PACKET_LOST : " + str(packet_lost))
-                logging.info("\n")
+                # logging.info("\n")
+                # logging.info(line)
+                # logging.info("\n")
+                # logging.info(delay_df)
+                # logging.info("\n")
+                # logging.info("PACKET_LOST : " + str(packet_lost))
+                # logging.info("\n")
                 print(line)
                 sys.stdout.flush()
 
@@ -405,9 +406,9 @@ def main() :
                         
                         columns = SENSOR_COLUMNS.copy()
                         df = df.drop(columns=columns)
-                        logging.info("\n")
-                        logging.info(df.columns)
-                        logging.info("\n")
+                        # logging.info("\n")
+                        # logging.info(df.columns)
+                        # logging.info("\n")
                         #logging.info(df.columns.tolist())
                         df = df.rename(columns={field : PD_VALUE})
                         #logging.info(df.columns.tolist())
@@ -421,8 +422,8 @@ def main() :
 
                         # # DataFrame must have the timestamp column as an index for the client. 
                         # df.set_index("_time")
-                        logging.info("\n")
-                        logging.info(df)
+                        # logging.info("\n")
+                        # logging.info(df)
                         m.fit(df, algorithm='Newton') # m.fit(df)
                         #future = m.make_future_dataframe(periods=X, freq=1, include_history=True)
                         # SE X DIVERSO DA 1 ALLORA PRENDERE PROBABILMENTE SOLO LA PRIMA RIGA
@@ -477,7 +478,16 @@ def main() :
 
 if __name__ == '__main__' :
         main()
-        logging.info("SIAMO FUORI DAL MAIN, QUALCOSA è ANDATO STORTO !!!!!")
+        logging.info("SIAMO FUORI DAL MAIN !!!!!")
         # _write_client.__del__()
         client.__del__()
+
         
+        packet_lost_df = pd.DataFrame(columns=["packet_lost"])
+        packet_lost_df = packet_lost_df.append({"packet_lost": packet_lost}, ignore_index=True)
+        logging.info("PACKET_LOST : " + str(packet_lost))
+        
+
+        delay_df.to_csv(os.path.join("/etc/telegraf/", "delay.csv"), index=False)
+        packet_lost_df.to_csv(os.path.join("/etc/telegraf/", "packet_lost.csv"), index=False)
+        logging.info(delay_df)

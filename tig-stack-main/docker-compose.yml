@@ -20,6 +20,8 @@ services:
       - ${TELEGRAF_FORECAST_PATH}:/etc/telegraf/data_forecasting.py:x
       - ${TELEGRAF_LOG_PATH}:/var/log/telegraf/telegraf.log
       - ${TELEGRAF_DATA_PATH}:/etc/telegraf/provaDati.json
+      - ${TELEGRAF_DELAY_PATH}:/etc/telegraf/delay.csv
+      - ${TELEGRAF_PL_PATH}:/etc/telegraf/packet_lost.csv
     env_file:
       - .env
     depends_on:
@@ -71,6 +73,27 @@ services:
       - ${TELEGRAM_PORT}:${TELEGRAM_PORT}
     restart: always
 
+  # https_proxy:
+  #   image: jc21/nginx-proxy-manager:latest
+  #   restart: unless-stopped
+  #   ports:
+  #   - '80:80'
+  #   - '81:81'
+  #   - '443:443'
+
+  # mongo:
+  #   image: mongo:latest
+  #   restart: always
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+  #     - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+  #     - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+  #   volumes:
+  #     - mongodb-storage:/data/db
+  #   ports: 
+  #     - 27017:27017
+
+
   # # arduino:
   # #   build: ./arduino
   # #   volumes:
@@ -80,3 +103,4 @@ services:
 volumes:
   grafana-storage: 
   influxdb-storage: 
+  mongodb-storage:
