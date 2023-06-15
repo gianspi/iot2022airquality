@@ -1,18 +1,22 @@
 #include<WiFiNINA.h>
 #include <ArduinoMqttClient.h>
 #include <ArduinoHttpClient.h>
+#define ARDUINOJSON_USE_LONG_LONG 1
 #include <ArduinoJson.h>
 #include <MQ2.h>
 #include "DHT.h"
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #define DHTTYPE DHT11
 #define DHTPIN 2
+#define DOCKERADDR "" //indirizzo locale maccina ospitante docker
 
 int Analog_Input = A0;
 
 float MAX_GAS_VALUE =1;
 float MIN_GAS_VALUE = 0.5;
-int SAMPLE_FREQUENCY = 5000;
+unsigned long SAMPLE_FREQUENCY = 60000;
 bool PROTOCOL = true;
 
 float lpg, co, smoke;
@@ -20,24 +24,26 @@ float h, t;
 int aqi;
 float measureWindow[5] = { };
 
+long idx = 0;
+
 MQ2 mq2(Analog_Input);
 DHT dht(DHTPIN, DHTTYPE);
+
+WiFiUDP ntpUDP;
+//NTPClient timeClient(ntpUDP, "ntp1.inrim.it", 3600, 60000);
+NTPClient timeClient(ntpUDP);
 
 const char* settings_topic = "set";
 const char* sense_topic = "sensedData";
 
-const char broker[] = "192.168.0.166";
+const char broker[] = DOCKERADDR;
 int        port     = 1883;
 
 WiFiClient wifi;
 WiFiClient wifi2;
 int status = WL_IDLE_STATUS;
 MqttClient mqttClient(wifi);
-HttpClient httpClient = HttpClient(wifi2, "192.168.0.166", 8080);
-
-String mqttPonteBaseUrl="http://192.168.0.166:1883/resources/";
-String mqttTopic="mode";
-
+HttpClient httpClient = HttpClient(wifi2, DOCKERADDR, 8080);
 
 void setup() {
   
@@ -50,12 +56,17 @@ void setup() {
   Serial.println("Connessione...");
   
   while (status != WL_CONNECTED){
-    status = WiFi.begin("Vodafone-34348811","M0zz4r3ll1n0");
+    status = WiFi.begin("XXXXXXXXXXX","XXXXXXXXXXXX");
     Serial.print(".");
     delay(1000);
   }
   
   Serial.println("Connected to WiFi!");
+
+  timeClient.begin();
+  
+  // Synchronize time initially
+  timeClient.update();
 
   mqttClient.setUsernamePassword("admin","admin");
 
@@ -78,6 +89,8 @@ void setup() {
 }
 
 void loop() {
+
+  timeClient.update();
 
   if (!mqttClient.connected()) {
     Serial.println("MQTT connection lost");
@@ -103,12 +116,23 @@ void loop() {
 
   doc["r"] = WiFi.RSSI();
   doc["i"] = "a57";
-  doc["p"]["la"] = "45.465";
-  doc["p"]["lo"] = "9.185";
+  doc["p"]["a"] = "45.465";
+  doc["p"]["o"] = "9.185";
   doc["a"]["h"] = h;
-  doc["a"]["tm"]   = t;
-  doc["a"]["co"] = co;
-  doc["aq"] = aqi;
+  doc["a"]["t"]   = t;
+  doc["a"]["c"] = co;
+  doc["q"] = aqi;
+  doc["n"] = idx;
+  //doc["t"] = timeClient.getEpochTime();
+
+  unsigned long seconds= timeClient.getEpochTime();
+  unsigned long millis = timeClient.get_millis() ;
+  millis = millis / 100;
+
+  uint64_t x = seconds * 1000ULL + millis;
+  doc["t"] = x;
+
+  updateIndex();
 
   serializeJson(doc, json_string);
   Serial.println(json_string);
@@ -178,11 +202,15 @@ void onMqttMessage(int messageSize) {
 
   MAX_GAS_VALUE = doc["max"];
   MIN_GAS_VALUE = doc["min"];
-  SAMPLE_FREQUENCY = (int)doc["samp"];
+  SAMPLE_FREQUENCY = (long)doc["samp"];
   PROTOCOL = doc["p"];
 
   Serial.println();
 
+}
+
+void updateIndex(){
+  idx++;
 }
 
 void updateAQI(){
