@@ -11,6 +11,9 @@
 #define DHTTYPE DHT11
 #define DHTPIN 2
 #define DOCKERADDR "" //indirizzo locale maccina ospitante docker
+#define SSID "XXXXXXXXXXX"
+#define PWD "XXXXXXXXXXX"
+
 
 int Analog_Input = A0;
 
@@ -56,7 +59,7 @@ void setup() {
   Serial.println("Connessione...");
   
   while (status != WL_CONNECTED){
-    status = WiFi.begin("XXXXXXXXXXX","XXXXXXXXXXXX");
+    status = WiFi.begin(SSID,PWD);
     Serial.print(".");
     delay(1000);
   }
